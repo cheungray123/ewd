@@ -100,10 +100,12 @@
 	--on-accent: #ffffff;
 	--on-accent-2: #ffffff;
 
-	/* ── 装饰渐变（占位头像 / 照片 fallback） ── */
-	--grad-ava-1: linear-gradient(135deg, #9fbcab, #2f5648);
-	--grad-ava-2: linear-gradient(135deg, #bcd0c8, #4d7d68);
-	--grad-ava-3: linear-gradient(135deg, #cdd9d4, #7a9c92);
+	/* ── 装饰渐变（占位头像 / 照片 fallback） ──
+	   ava 渐变使用项目三色 accent / accent-2 / accent-3，
+	   明暗模式自动跟随主题色变量 */
+	--grad-ava-1: linear-gradient(135deg, var(--accent), var(--accent-2));
+	--grad-ava-2: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+	--grad-ava-3: linear-gradient(135deg, var(--accent-3), var(--accent));
 	--grad-photo-1: linear-gradient(160deg, #d4dcd8 0%, #8aaa9e 30%, #4d7d68 55%, #2f5648 100%);
 	--grad-photo-2: linear-gradient(145deg, #c4b89a 0%, #9fbcab 35%, #4d7d68 65%, #2f5648 100%);
 	--grad-photo-3: linear-gradient(130deg, #f0e6d8 0%, #e0c3a4 30%, #bd8a63 60%, #8f5e3e 100%);
@@ -198,10 +200,7 @@
 	--on-accent: #0a0a1a;
 	--on-accent-2: #0a0a1a;
 
-	/* 装饰渐变 */
-	--grad-ava-1: linear-gradient(135deg, #9fbcab, #2f5648);
-	--grad-ava-2: linear-gradient(135deg, #bcd0c8, #4d7d68);
-	--grad-ava-3: linear-gradient(135deg, #cdd9d4, #7a9c92);
+	/* 装饰渐变 — ava 已引用三色变量，无需覆盖；仅保留 photo 硬编码 */
 	--grad-photo-1: linear-gradient(160deg, #d4dcd8 0%, #8aaa9e 30%, #4d7d68 55%, #2f5648 100%);
 	--grad-photo-2: linear-gradient(145deg, #c4b89a 0%, #9fbcab 35%, #4d7d68 65%, #2f5648 100%);
 	--grad-photo-3: linear-gradient(130deg, #f0e6d8 0%, #e0c3a4 30%, #bd8a63 60%, #8f5e3e 100%);
