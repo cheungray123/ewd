@@ -11,7 +11,7 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			adapter: adapter(),
+			adapter: adapter({ pages: 'dist' }),
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			preprocess: [mdsvexConfig as any],
 			extensions: ['.svelte', '.svx', '.md'],
