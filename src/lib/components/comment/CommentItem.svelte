@@ -99,7 +99,10 @@
 			? config.SITE_NAME || config.BLOGGER_NAME || comment.nick || '博主'
 			: comment.nick || '匿名'
 	);
-	function getReplyDisplayNick(nick: string | undefined): string {
+	function getReplyDisplayNick(replyUser: { nick?: string; mailMd5?: string } | string | undefined): string {
+		if (!replyUser) return '';
+		// 兼容后端两种返回格式：字符串（直接是昵称）或对象 { nick, mailMd5 }
+		const nick = typeof replyUser === 'string' ? replyUser : replyUser.nick;
 		if (!nick) return '';
 		// 兼容历史数据：博主被 @ 时 replyUser.nick 可能存的是「博主」或 MASTER_TAG
 		if (config.SITE_NAME && (nick === '博主' || nick === config.MASTER_TAG)) {
@@ -364,7 +367,7 @@
 					onclick={handleContentClick}
 				>
 					{#if comment.replyUser}<span class="reply-to"
-							>@{getReplyDisplayNick(comment.replyUser.nick)}</span
+							>@{getReplyDisplayNick(comment.replyUser)}</span
 						>{/if}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html processedComment}
@@ -372,7 +375,7 @@
 			{:else}
 				<div class="text">
 					{#if comment.replyUser}<span class="reply-to"
-							>@{getReplyDisplayNick(comment.replyUser.nick)}</span
+							>@{getReplyDisplayNick(comment.replyUser)}</span
 						>{/if}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html processedComment}

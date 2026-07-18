@@ -118,19 +118,9 @@
 		:global(.status) {
 			margin: 1rem 0;
 		}
-		/* 移动端：禁用滚动动画，允许文本自然换行避免被裁剪 */
-		.track {
-			animation: none;
-			width: 100%;
-			white-space: normal;
-		}
 		.text {
-			white-space: normal;
-			padding-right: 0.5rem;
-		}
-		.ticker {
-			-webkit-mask-image: none;
-			mask-image: none;
+			font-size: 0.5625rem;
+			padding-right: 1.5rem;
 		}
 	}
 </style>
