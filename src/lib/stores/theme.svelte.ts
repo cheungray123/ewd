@@ -30,7 +30,8 @@ class ThemeStore {
 				t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 			}
 		} catch {
-			t = 'light';
+			// localStorage 不可用（隐私模式等），跟随系统偏好
+			t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 		}
 
 		document.documentElement.setAttribute('data-theme', t);

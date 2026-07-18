@@ -18,6 +18,22 @@
 		<link rel="manifest" href="/manifest.json" />
 		<!-- 本地字体配置 -->
 		<link rel="stylesheet" href="/fonts/fonts.css" />
+		<!-- 防闪烁：在 CSS 渲染前从 localStorage 读取主题并设置 data-theme -->
+		<script>
+			(function () {
+				try {
+					var t = localStorage.getItem('df-theme');
+					if (t !== 'light' && t !== 'dark') {
+						t = window.matchMedia('(prefers-color-scheme: dark)').matches
+							? 'dark'
+							: 'light';
+					}
+					document.documentElement.setAttribute('data-theme', t);
+				} catch (e) {
+					document.documentElement.setAttribute('data-theme', 'dark');
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
