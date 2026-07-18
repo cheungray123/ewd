@@ -9,13 +9,28 @@
 	onMount(() => {
 		if (!trackEl || !tickerEl) return;
 
-		// 计算需要复制多少份才能填满容器
-		const tickerWidth = tickerEl.offsetWidth;
-		const textWidth = trackEl.scrollWidth / copies;
+		// 计算单份文本宽度：先渲染 1 份测量，避免 copies>1 时除法不准
+		copies = 1;
+		// 等待 DOM 更新后测量
+		queueMicrotask(() => {
+			if (!trackEl || !tickerEl) return;
+			const textWidth = trackEl.scrollWidth;
+			if (textWidth <= 0) return;
 
-		// 需要至少填满 2 倍容器宽度 + 1 份文本，确保无缝
-		const neededWidth = tickerWidth * 2 + textWidth;
-		copies = Math.ceil(neededWidth / textWidth);
+			const tickerWidth = tickerEl.offsetWidth;
+
+			// 需要至少填满 2 倍容器宽度 + 1 份文本，确保无缝
+			const neededWidth = tickerWidth * 2 + textWidth;
+			let needed = Math.ceil(neededWidth / textWidth);
+
+			// 确保 copies 为偶数：动画使用 translateX(-50%)，
+			// 偶数份才能保证 -50% 正好对齐到内容中点，实现无缝循环
+			if (needed % 2 !== 0) needed += 1;
+			// 至少 2 份
+			if (needed < 2) needed = 2;
+
+			copies = needed;
+		});
 	});
 </script>
 
@@ -25,7 +40,7 @@
 	<div class="ticker" aria-hidden="true" bind:this={tickerEl}>
 		<div class="track" bind:this={trackEl}>
 			{#each Array(copies), i (i)}
-				<span class="text" aria-hidden={i > 0}>{tickerSrText}</span>
+				<span class="text">{tickerSrText}</span>
 			{/each}
 		</div>
 	</div>
@@ -87,7 +102,7 @@
 		font-size: 0.625rem;
 		color: var(--muted);
 		letter-spacing: 0.04em;
-		padding-right: 8rem;
+		padding-right: var(--sp-xl);
 	}
 
 	@keyframes ticker-scroll {
@@ -103,8 +118,15 @@
 		:global(.status) {
 			margin: 1rem 0;
 		}
+		/* 移动端：禁用滚动动画，允许文本自然换行避免被裁剪 */
 		.track {
 			animation: none;
+			width: 100%;
+			white-space: normal;
+		}
+		.text {
+			white-space: normal;
+			padding-right: 0.5rem;
 		}
 		.ticker {
 			-webkit-mask-image: none;

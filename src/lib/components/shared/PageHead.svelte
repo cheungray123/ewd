@@ -66,14 +66,14 @@
 		color: var(--accent);
 	}
 	.desc {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		color: var(--dim);
 		max-width: 30rem;
 		line-height: 1.7;
 	}
 	.count {
 		font-family: var(--font-mono);
-		font-size: 0.6875rem;
+		font-size: var(--text-xs-2);
 		color: var(--muted);
 		white-space: nowrap;
 	}

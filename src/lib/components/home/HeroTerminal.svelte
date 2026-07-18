@@ -1,5 +1,6 @@
 <script lang="ts">
 	import AnimatedNumber from './AnimatedNumber.svelte';
+	import TerminalHeader from '$lib/components/shared/TerminalHeader.svelte';
 
 	interface Props {
 		stats?: { num: string; label: string }[];
@@ -7,7 +8,7 @@
 	let { stats = [] }: Props = $props();
 
 	const terminalLines = [
-		{ prompt: '>', cmd: 'Welcome', output: 'Hello word' },
+		{ prompt: '>', cmd: 'Welcome', output: 'Hello world' },
 		{ prompt: '>', cmd: 'whoami', output: 'a@ewd.cc' },
 		{ prompt: '>', cmd: 'ls -la /blog/', output: 'articles/ photos/ moments/' },
 		{ prompt: '>', cmd: 'cat status.txt', output: 'online • writing • exploring' },
@@ -16,12 +17,7 @@
 </script>
 
 <div class="terminal">
-	<div class="terminal-header">
-		<span class="terminal-dot"></span>
-		<span class="terminal-dot"></span>
-		<span class="terminal-dot"></span>
-		<span class="terminal-title">status.exe</span>
-	</div>
+	<TerminalHeader title="status.exe" />
 	<div class="terminal-body">
 		{#each terminalLines as line (line.cmd)}
 			<div class="terminal-line">
@@ -40,12 +36,12 @@
 	{#if stats.length > 0}
 		<div class="terminal-stats">
 			{#each stats as stat, i (stat.label)}
-				<div class="terminal-stat" style="animation-delay: {i * 0.15}s">
-					<div class="terminal-stat-num" style="animation-delay: {i * 0.15}s">
-						<AnimatedNumber value={stat.num} delay={i * 150} />
-					</div>
-					<div class="terminal-stat-label">{stat.label}</div>
+		<div class="terminal-stat">
+				<div class="terminal-stat-num">
+					<AnimatedNumber value={stat.num} delay={i * 150} />
 				</div>
+				<div class="terminal-stat-label">{stat.label}</div>
+			</div>
 			{/each}
 		</div>
 	{:else}
@@ -77,45 +73,6 @@
 		transform: translate(-2px, -2px);
 		border-color: var(--accent);
 		box-shadow: var(--pixel-shadow-hover);
-	}
-
-	.terminal-header {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 10px 14px;
-		border-bottom: 1px solid var(--border);
-		background: color-mix(in oklch, var(--fg) 2%, transparent);
-	}
-
-	.terminal-dot {
-		width: 8px;
-		height: 8px;
-		border: 2px solid;
-	}
-
-	.terminal-dot:nth-child(1) {
-		border-color: var(--accent);
-		background: var(--accent);
-	}
-
-	.terminal-dot:nth-child(2) {
-		border-color: var(--accent-2);
-		background: var(--accent-2);
-	}
-
-	.terminal-dot:nth-child(3) {
-		border-color: var(--accent-3);
-		background: var(--accent-3);
-	}
-
-	.terminal-title {
-		font-family: var(--font-pixel);
-		font-size: var(--text-2xs);
-		color: var(--muted);
-		letter-spacing: 0.1em;
-		margin-left: auto;
-		text-transform: uppercase;
 	}
 
 	.terminal-body {
@@ -172,7 +129,7 @@
 
 	.terminal-stats {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
 		gap: 0;
 		border-top: 1px solid var(--border);
 	}
@@ -194,17 +151,6 @@
 		margin-bottom: 4px;
 		animation: number-glow 1.5s ease-out both;
 		display: inline-block;
-	}
-
-	@keyframes number-pop {
-		0% {
-			opacity: 0;
-			transform: scale(0.5) translateY(10px);
-		}
-		100% {
-			opacity: 1;
-			transform: scale(1) translateY(0);
-		}
 	}
 
 	@keyframes number-glow {

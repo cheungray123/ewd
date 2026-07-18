@@ -44,7 +44,7 @@
 		align-items: center;
 		justify-content: space-between;
 		font-family: var(--font-mono);
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		color: var(--dim);
 		padding: 0.42rem 0.55rem;
 		border-radius: var(--r-sm);
@@ -57,7 +57,7 @@
 	:global(.yr-nav a em) {
 		font-style: normal;
 		font-size: 0.625rem;
-		color: var(--faint);
+		color: var(--muted);
 		transition: color 0.2s var(--ease);
 	}
 	:global(.yr-nav a:hover) {

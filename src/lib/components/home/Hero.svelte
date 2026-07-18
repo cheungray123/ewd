@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { heroConfig } from '$lib/settings/pages';
+	import { site } from '$lib/settings/site';
 	import type { HeroStat, LatestMoment } from '$lib/types';
 	import HeroTerminal from './HeroTerminal.svelte';
 
@@ -21,7 +22,7 @@
 <section class="hero">
 	<span class="float-scanline"></span>
 	<div class="h-left">
-		<div class="h-card">
+		<div class="h-card" data-established={site.established}>
 			<div class="eyebrow">{heroConfig.eyebrow}</div>
 			<h1 class="h-title">{heroConfig.title}<em>{heroConfig.titleAccent}</em></h1>
 			<p class="h-sub">{heroConfig.subtitle}</p>
@@ -87,22 +88,22 @@
 			box-shadow 0.2s var(--ease);
 		animation: hero-slide-left 0.2s var(--ease) both;
 	}
-	:global(.h-card:hover) {
-		transform: translate(-2px, -2px);
-		border-color: var(--accent);
-		box-shadow: var(--pixel-shadow-hover);
-	}
-	:global(.h-card::after) {
-		content: 'EST. 2019';
-		position: absolute;
-		top: 1.1rem;
-		right: 1.3rem;
-		font-family: var(--font-mono);
-		font-size: 0.5625rem;
-		letter-spacing: 0.18em;
-		color: var(--muted);
-	}
-	:global(.eyebrow) {
+:global(.h-card:hover) {
+	transform: translate(-2px, -2px);
+	border-color: var(--accent);
+	box-shadow: var(--pixel-shadow-hover);
+}
+:global(.h-card::after) {
+	content: attr(data-established);
+	position: absolute;
+	top: 1.1rem;
+	right: 1.3rem;
+	font-family: var(--font-pixel);
+	font-size: 0.5625rem;
+	letter-spacing: 0.18em;
+	color: var(--muted);
+}
+:global(.eyebrow) {
 		font-family: var(--font-pixel);
 		font-size: 0.5rem;
 		letter-spacing: 0.12em;
@@ -211,12 +212,12 @@
 	.h-moment-link {
 		font-family: var(--font-mono);
 		font-size: 0.625rem;
-		color: var(--accent-3);
+		color: var(--muted);
 		font-weight: 500;
-		transition: gap 0.3s var(--ease);
+		transition: color 0.2s var(--ease);
 	}
 	.h-moment:hover .h-moment-link {
-		color: var(--accent-3);
+		color: var(--accent);
 	}
 
 	@media (max-width: 900px) {

@@ -27,6 +27,9 @@
 	let { slug }: Props = $props();
 
 	let post = $derived(getPostCard(slug));
+
+	// 对 slug 做安全显示处理（Svelte 文本插值本身已转义，这里额外限制字符集）
+	let safeSlug = $derived(slug.replace(/[<>"'&]/g, ''));
 </script>
 
 {#if post}
@@ -54,7 +57,7 @@
 	</a>
 {:else}
 	<div class="post-ref-error">
-		未找到 slug 为「{slug}」的文章，请检查 slug 是否正确。
+		未找到 slug 为「{safeSlug}」的文章，请检查 slug 是否正确。
 	</div>
 {/if}
 
@@ -194,7 +197,7 @@
 	}
 
 	.pr-meta .sep {
-		color: var(--faint);
+		color: var(--muted);
 	}
 
 	.pr-meta .wc {

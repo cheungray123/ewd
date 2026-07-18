@@ -32,6 +32,14 @@ export function useInView(
 		const target = getTarget();
 		if (!target) return;
 
+		// 计算 IntersectionObserver 的 threshold：
+		// - number: 直接使用该比例 (0~1)
+		// - 'all': 元素完全可见时触发 → threshold = 1
+		// - 'some' / undefined: 任意像素可见即触发 → threshold = 0
+		const amount = options?.amount;
+		const threshold =
+			typeof amount === 'number' ? amount : amount === 'all' ? 1 : 0;
+
 		const observer = new IntersectionObserver(
 			(entries) => {
 				for (const entry of entries) {
@@ -40,8 +48,7 @@ export function useInView(
 			},
 			{
 				rootMargin: options?.margin ?? '0px',
-				threshold:
-					typeof options?.amount === 'number' ? options.amount : options?.amount === 'all' ? 1 : 0
+				threshold
 			}
 		);
 

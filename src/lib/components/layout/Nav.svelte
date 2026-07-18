@@ -44,8 +44,11 @@
 				scrollLock.reset();
 			}
 		}
-		// 快捷键 Ctrl/Cmd + K 打开搜索
+		// 快捷键 Ctrl/Cmd + K 打开搜索（在输入框中时不触发）
 		if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+			const target = e.target as HTMLElement;
+			const tag = target?.tagName?.toLowerCase();
+			if (tag === 'input' || tag === 'textarea' || target?.isContentEditable) return;
 			e.preventDefault();
 			searchOpen = true;
 			scrollLock.lock();
@@ -58,6 +61,30 @@
 		if (href === '/') return currentPath === '/';
 		return currentPath.startsWith(href);
 	}
+
+	// 移动端菜单 focus trap
+	let menuEl = $state<HTMLDivElement | null>(null);
+	function handleMenuKeydown(e: KeyboardEvent) {
+		if (!menuOpen || e.key !== 'Tab' || !menuEl) return;
+		const focusable = menuEl.querySelectorAll<HTMLElement>(
+			'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+		);
+		if (focusable.length === 0) return;
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		const active = document.activeElement as HTMLElement | null;
+		if (e.shiftKey) {
+			if (active === first || !menuEl.contains(active)) {
+				e.preventDefault();
+				last.focus();
+			}
+		} else {
+			if (active === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		}
+	}
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
@@ -65,9 +92,10 @@
 <nav class="nav">
 	<a class="brand" href="/">{site.brand.prefix}<b>{site.brand.accent}</b></a>
 
-	<div class="nav-menu" class:open={menuOpen} id="nav-menu">
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="nav-menu" class:open={menuOpen} id="nav-menu" bind:this={menuEl} onkeydown={handleMenuKeydown}>
 		{#each navItems as item (item.href)}
-			<a href={item.href} class:active={isActive(item.href)} onclick={handleNavClick}>
+			<a href={item.href} class:active={isActive(item.href)} onclick={handleNavClick} aria-current={isActive(item.href) ? 'page' : undefined}>
 				{item.label}
 			</a>
 		{/each}
@@ -143,7 +171,6 @@
 		display: flex;
 		gap: 1.4rem;
 		font-family: var(--font-pixel);
-		font-size: var(--text-2xs);
 		font-weight: 400;
 		text-transform: uppercase;
 		letter-spacing: 0.04em;

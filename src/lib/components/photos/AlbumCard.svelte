@@ -57,7 +57,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.12'/%3E%3C/svg%3E");
+		background-image: var(--noise-texture);
 		mix-blend-mode: overlay;
 		opacity: 0.6;
 		pointer-events: none;
@@ -74,12 +74,12 @@
 		font-family: var(--font-body);
 		font-weight: 700;
 		font-size: 1rem;
-		color: var(--fg);
+		color: #ffffff;
 	}
 	.cap .n {
 		font-family: var(--font-mono);
 		font-size: 0.625rem;
-		color: var(--fg);
+		color: rgba(255, 255, 255, 0.8);
 		margin-top: 0.2rem;
 		letter-spacing: 0.04em;
 	}

@@ -13,9 +13,9 @@
 			{#if item.dots}
 				<span class="dots">…</span>
 			{:else if item.href}
-				<a href={item.href}>{item.label}</a>
+				<a href={item.href} aria-label={`跳转到第 ${item.label} 页`}>{item.label}</a>
 			{:else}
-				<span class="cur">{item.label}</span>
+				<span class="cur" aria-current="page" aria-label={`当前第 ${item.label} 页`}>{item.label}</span>
 			{/if}
 		{/each}
 	{/if}
@@ -29,7 +29,7 @@
 		gap: 0.5rem;
 		margin-top: 2.4rem;
 		font-family: var(--font-mono);
-		font-size: 0.6875rem;
+		font-size: var(--text-xs-2);
 		color: var(--muted);
 	}
 	:global(.pager) :global(a),

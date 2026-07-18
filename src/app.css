@@ -11,9 +11,9 @@
 	--surface-h: #161640;
 	--surface-alt: #1a1a3a;
 	--fg: #e8e8f0;
-	--dim: #9090b0;
-	--muted: #6060a0;
-	--faint: #404070;
+	--dim: #9898c0;
+	--muted: #8888c0;
+	--faint: #6868a8;
 	--border: #252550;
 	--border-l: #1c1c3a;
 	--accent: #00ff88;
@@ -26,7 +26,7 @@
 	--warn: #ffaa00;
 	--code-bg: #08081a;
 	--code-fg: #c0c0e0;
-	--code-gutter: #404060;
+	--code-gutter: #585878;
 	--code-selection: rgba(0, 255, 136, 0.15);
 	--code-line-highlight: rgba(0, 255, 136, 0.04);
 	--glow: 0 0 12px rgba(0, 255, 136, 0.2);
@@ -36,9 +36,9 @@
 	/* 像素字体：Press Start 2P（本地）→ 后备像素风格 */
 	--font-pixel: 'Press Start 2P', 'Courier New', monospace;
 
-	/* 正文字体：系统字体栈（优先中文）→ 本地 Geist → 后备 */
+	/* 正文字体：本地 Noto Sans SC（可变字体，unicode-range 分包）→ 系统中文 → 后备 */
 	--font-body:
-		'Noto Sans SC', /* 中文优先 */ 'PingFang SC', /* macOS 中文 */ 'Microsoft YaHei',
+		'Noto Sans SC', /* 本地可变字体（100-900 权重） */ 'PingFang SC', /* macOS 中文 */ 'Microsoft YaHei',
 		/* Windows 中文 */ 'Geist', /* 本地现代无衬线 */ -apple-system,
 		/* iOS/macOS 系统 */ BlinkMacSystemFont, /* macOS Chrome */ 'Segoe UI',
 		/* Windows 系统 */ Roboto, /* Android */ 'Helvetica Neue', /* 经典 */ Arial, sans-serif;
@@ -53,7 +53,9 @@
 	/* ── 字体大小系统 ── */
 	--text-2xs: 0.4375rem; /* 7px - 最小标签 */
 	--text-xs: 0.625rem; /* 10px - 小标签、元数据 */
+	--text-xs-2: 0.6875rem; /* 11px - 次小标签 */
 	--text-sm: 0.75rem; /* 12px - 辅助文字 */
+	--text-sm-2: 0.8125rem; /* 13px - 正文辅助 */
 	--text-base: 0.875rem; /* 14px - 正文 */
 	--text-lg: 1rem; /* 16px - 大正文 */
 	--text-xl: 1.25rem; /* 20px - 小标题 */
@@ -66,6 +68,11 @@
 	--sp-lg: 2rem;
 	--sp-xl: 3.2rem;
 	--sp-2xl: 5rem;
+
+	/* ── 过渡时长 ── */
+	--t-fast: 0.15s; /* 揭示、快速反馈 */
+	--t-base: 0.2s; /* 标准 hover */
+	--t-slow: 0.3s; /* 复杂过渡（边框、背景） */
 
 	/* ── 圆角 = 零（像素宇宙无圆角） ── */
 	--r-sm: 0;
@@ -83,6 +90,9 @@
 
 	/* ── 边框 ── */
 	--pixel-border: 2px solid var(--border);
+
+	/* ── 装饰资源 ── */
+	--noise-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.12'/%3E%3C/svg%3E");
 
 	/* ── 动效 — 像素阶梯缓动 ── */
 	--ease: steps(4, end);
@@ -158,14 +168,14 @@
 	--surface-alt: #eee9e0;
 	--fg: #1a1a2e;
 	--dim: #4a4a6a;
-	--muted: #7070a0;
-	--faint: #a0a0c0;
+	--muted: #50507a;
+	--faint: #6a6a9a;
 	--border: #d0d0e0;
 	--border-l: #e0e0ea;
 
 	/* 强调色 */
 	--accent: #0a7a4a;
-	--accent-2: #c04080;
+	--accent-2: #a8346e;
 	--accent-3: #2060c0;
 	--accent-soft: rgba(10, 122, 74, 0.08);
 	--accent-hover: #086a3e;
@@ -176,7 +186,7 @@
 	/* 代码块 */
 	--code-bg: #1a1a2e;
 	--code-fg: #d0d0e0;
-	--code-gutter: #6060a0;
+	--code-gutter: #50507a;
 	--code-selection: rgba(10, 122, 74, 0.2);
 	--code-line-highlight: rgba(10, 122, 74, 0.06);
 
@@ -839,18 +849,6 @@ h3:hover .heading-anchor {
 }
 
 @keyframes pulse {
-	0%,
-	100% {
-		transform: scale(1);
-		box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4);
-	}
-	50% {
-		transform: scale(1.4);
-		box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
-	}
-}
-
-@keyframes pulse-dot {
 	0%,
 	100% {
 		transform: scale(1);

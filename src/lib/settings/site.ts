@@ -1,5 +1,10 @@
 import type { NavItem } from '$lib/types';
 
+/** 站点起始年份（用于版权区间计算） */
+const START_YEAR = 2019;
+const CURRENT_YEAR = new Date().getFullYear();
+const yearRange = CURRENT_YEAR > START_YEAR ? `${START_YEAR}-${CURRENT_YEAR}` : `${START_YEAR}`;
+
 /** 站点全局配置 */
 export const site = {
 	name: '東风',
@@ -8,9 +13,9 @@ export const site = {
 	description: '写代码、记生活，偶尔拍点照片。',
 	url: 'https://ewd.cc',
 	avatar: '/avatar.jpg',
-	copyright: '© 2026 東风 · 写代码的人也记生活',
-	established: 'EWD. 2019',
-	startYear: 2025,
+	copyright: `© ${yearRange} 東风 · 写代码的人也记生活`,
+	established: `EWD. ${START_YEAR}`,
+	startYear: START_YEAR,
 	themeKey: 'df-theme',
 	searchPlaceholder: '搜索文章、说说、相册…'
 } as const;

@@ -38,45 +38,6 @@
 			padding: 0 0 3rem;
 			border-top: none;
 		}
-		.pixel-divider {
-			height: 4px;
-			margin-bottom: var(--sp-md);
-			background: repeating-linear-gradient(
-				90deg,
-				var(--accent) 0,
-				var(--accent) 12px,
-				transparent 12px,
-				transparent 24px,
-				var(--accent-2) 24px,
-				var(--accent-2) 36px,
-				transparent 36px,
-				transparent 48px,
-				var(--accent-3) 48px,
-				var(--accent-3) 60px,
-				transparent 60px,
-				transparent 72px,
-				var(--surface-alt) 72px,
-				var(--surface-alt) 84px,
-				transparent 84px,
-				transparent 96px,
-				var(--accent) 96px,
-				var(--accent) 108px,
-				transparent 108px,
-				transparent 120px,
-				var(--accent-2) 120px,
-				var(--accent-2) 132px,
-				transparent 132px,
-				transparent 144px,
-				var(--muted) 144px,
-				var(--muted) 156px,
-				transparent 156px,
-				transparent 168px,
-				var(--surface-alt) 168px,
-				var(--surface-alt) 180px,
-				transparent 180px,
-				transparent 192px
-			);
-		}
 		.foot-row {
 			display: flex;
 			justify-content: space-between;

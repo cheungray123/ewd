@@ -25,11 +25,8 @@
 			}
 		}
 
-		// 页面顶部，还没有任何标题越过判定线时，激活第一个
-		if (!current) {
-			current = items[0].id;
-		}
-
+		// 如果没有任何标题越过判定线，不激活任何项
+		// （原来是强制激活第一个，导致滚动到所有标题上方时第一个仍高亮）
 		activeId = current;
 	}
 
@@ -54,6 +51,20 @@
 			if (rafId !== undefined) cancelAnimationFrame(rafId);
 		};
 	});
+
+	// 点击目录项时平滑滚动到对应标题
+	function handleTocClick(e: MouseEvent, id: string) {
+		e.preventDefault();
+		const el = document.getElementById(id);
+		if (!el) return;
+		const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+		const offset = window.innerHeight * 0.2;
+		const top = el.getBoundingClientRect().top + window.scrollY - offset;
+		window.scrollTo({ top, behavior: reduce ? 'auto' : 'smooth' });
+		// 更新 URL hash 但不触发默认跳转
+		history.replaceState(null, '', `#${id}`);
+		activeId = id;
+	}
 </script>
 
 <aside class="toc" aria-label="文章目录">
@@ -63,7 +74,11 @@
 			<ol>
 				{#each items as item (item.id)}
 					<li class="lv-{item.level}" class:active={activeId === item.id}>
-						<a href="#{item.id}">{item.label}</a>
+						<a
+							href="#{item.id}"
+							aria-current={activeId === item.id ? 'true' : undefined}
+							onclick={(e) => handleTocClick(e, item.id)}>{item.label}</a
+						>
 					</li>
 				{/each}
 			</ol>

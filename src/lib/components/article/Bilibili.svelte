@@ -43,7 +43,7 @@
 		<div class="bili-aspect">
 			<iframe
 				src={embedSrc}
-				title={`Bilibili 视频 ${resolvedBvid}`}
+				title={`Bilibili 视频 ${resolvedBvid}${page > 1 ? ` 第 ${page} 页` : ''}`}
 				scrolling="no"
 				allowfullscreen
 				loading="lazy"

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { fade, scale } from 'svelte/transition';
+	import { goto } from '$app/navigation';
 	import { Search, FileText, Camera, X, CornerDownLeft } from 'svelte-lucide';
 	import { site } from '$lib/settings/site';
 	import { initSearchIndex, search, type SearchResult } from '$lib/utils/search';
@@ -16,6 +17,7 @@
 	let searchQuery = $state('');
 	let results = $state<SearchResult[]>([]);
 	let inputEl = $state<HTMLInputElement | null>(null);
+	let modalEl = $state<HTMLDivElement | null>(null);
 	let activeIndex = $state(0);
 
 	// 热门文章（未搜索时显示）
@@ -70,13 +72,22 @@
 		return () => clearTimeout(timer);
 	});
 
+	// 当前可导航的列表（搜索结果或热门文章）
+	type NavItem = { href: string };
+	let navList = $derived<NavItem[]>(
+		searchQuery.trim()
+			? results
+			: popularPosts.map((p) => ({ href: `/posts/${p.slug}` }))
+	);
+
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
+			e.preventDefault();
 			onNavigate?.();
 			return;
 		}
 
-		const list = searchQuery.trim() ? results : [];
+		const list = navList;
 		if (list.length === 0) return;
 
 		if (e.key === 'ArrowDown') {
@@ -87,16 +98,44 @@
 			activeIndex = (activeIndex - 1 + list.length) % list.length;
 		} else if (e.key === 'Enter' && list[activeIndex]) {
 			e.preventDefault();
+			const href = list[activeIndex].href;
 			onNavigate?.();
-			window.location.href = list[activeIndex].href;
+			goto(href);
+		} else if (e.key === 'Tab') {
+			// Focus trap：Tab/Shift+Tab 在面板内部循环
+			trapFocus(e);
 		}
 	}
 
-	function handleResultClick(r: SearchResult) {
+	/** 焦点陷阱：Tab 键在模态框内部可聚焦元素之间循环 */
+	function trapFocus(e: KeyboardEvent) {
+		if (!modalEl) return;
+		const focusable = modalEl.querySelectorAll<HTMLElement>(
+			'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])'
+		);
+		if (focusable.length === 0) return;
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		const active = document.activeElement as HTMLElement | null;
+
+		if (e.shiftKey) {
+			if (active === first || !modalEl.contains(active)) {
+				e.preventDefault();
+				last.focus();
+			}
+		} else {
+			if (active === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		}
+	}
+
+	function handleResultClick(_r: SearchResult) {
 		onNavigate?.();
 	}
 
-	function handlePopularClick(slug: string) {
+	function handlePopularClick(_slug: string) {
 		onNavigate?.();
 	}
 </script>
@@ -113,11 +152,14 @@
 
 	<!-- 搜索面板（屏幕中央） -->
 	<div
+		bind:this={modalEl}
 		class="search-modal"
 		transition:scale={{ duration: 200, start: 0.96, opacity: 0 }}
 		role="dialog"
 		aria-modal="true"
 		aria-label="搜索"
+		tabindex="-1"
+		onkeydown={handleKeydown}
 	>
 		<!-- 搜索框 -->
 		<div class="search-form" role="search">
@@ -290,7 +332,7 @@
 		outline: none;
 	}
 	.search-input::placeholder {
-		color: var(--faint);
+		color: var(--muted);
 	}
 	.search-clear {
 		flex-shrink: 0;
@@ -345,7 +387,7 @@
 		font-size: 0.625rem;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
-		color: var(--faint);
+		color: var(--muted);
 	}
 
 	.result-list {
@@ -385,7 +427,7 @@
 	}
 	.r-icon.is-photo {
 		background: var(--accent-soft);
-		color: var(--warn);
+		color: var(--accent-2);
 	}
 
 	.r-info {
@@ -396,7 +438,7 @@
 		flex: 1;
 	}
 	.r-info b {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		font-weight: 600;
 		color: var(--fg);
 		white-space: nowrap;
@@ -404,7 +446,7 @@
 		text-overflow: ellipsis;
 	}
 	.r-info small {
-		font-size: 0.6875rem;
+		font-size: var(--text-xs-2);
 		color: var(--dim);
 		white-space: nowrap;
 		overflow: hidden;
@@ -422,7 +464,7 @@
 		text-align: center;
 	}
 	.search-empty p {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		color: var(--dim);
 		line-height: 1.6;
 	}
@@ -436,7 +478,7 @@
 			padding: 0.75rem 1rem;
 		}
 		.search-input {
-			font-size: 0.8125rem;
+			font-size: var(--text-sm-2);
 		}
 		.search-close {
 			display: none;

@@ -132,7 +132,7 @@
 		flex: 0 0 auto;
 	}
 	.val {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		color: var(--fg);
 	}
 

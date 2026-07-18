@@ -222,7 +222,7 @@
 	}
 	.breadcrumb .current {
 		color: var(--muted);
-		max-width: 300px;
+		max-width: 50vw;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -297,7 +297,7 @@
 		color: var(--accent);
 	}
 	.a-meta .wc {
-		color: var(--faint);
+		color: var(--muted);
 	}
 	.a-meta .wc::before,
 	.a-meta .views::before {
@@ -306,7 +306,7 @@
 		color: var(--border);
 	}
 	.a-meta .views {
-		color: var(--faint);
+		color: var(--muted);
 	}
 
 	.prose {
@@ -330,7 +330,7 @@
 	}
 	.prose :global(p) {
 		margin: 1rem 0;
-		color: var(--dim);
+		color: var(--fg);
 	}
 	.prose :global(a) {
 		color: var(--link);
@@ -533,7 +533,7 @@
 		margin-top: 2.5rem;
 		padding-top: 1.5rem;
 		border-top: 1px dashed var(--border);
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 	}
 
 	.prose :global(.footnotes ol) {
@@ -712,7 +712,7 @@
 	.related-date {
 		font-family: var(--font-mono);
 		font-size: 0.625rem;
-		color: var(--faint);
+		color: var(--muted);
 		margin-top: auto;
 	}
 

@@ -47,7 +47,7 @@
 		<div class="acts">
 			<button class="act like-btn" class:liked onclick={onLike} disabled={liking} aria-label="点赞">
 				<Heart size="11" strokeWidth="1.6" fill={liked ? 'currentColor' : 'none'} />
-				{likes > 0 ? likes : ''} 赞
+				{likes > 0 ? likes : '0'} 赞
 			</button>
 			<button
 				class="act comment-btn"
@@ -126,7 +126,7 @@
 			outline-offset: 3px;
 		}
 		p {
-			font-size: 0.8125rem;
+			font-size: var(--text-sm-2);
 			line-height: 1.72;
 			color: var(--fg);
 		}

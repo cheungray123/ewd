@@ -192,9 +192,6 @@
 			width: 140px;
 			height: 140px;
 		}
-		.portrait::after {
-			font-size: 3rem;
-		}
 		.about-hero p {
 			margin: 0 auto;
 		}

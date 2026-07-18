@@ -150,7 +150,19 @@
 
 	onDestroy(() => {
 		if (audioEl) {
-			audioEl.pause();
+			// 等待未完成的 play() Promise，避免 pause() 中断时抛出 AbortError
+			if (playPromise) {
+				try {
+					playPromise.catch(() => {});
+				} catch {
+					/* ignore */
+				}
+			}
+			try {
+				audioEl.pause();
+			} catch {
+				/* pause 在某些状态下可能抛错，忽略 */
+			}
 			audioEl.src = '';
 			playPromise = null;
 		}
@@ -262,7 +274,10 @@
 
 	function onVolumeChange(e: Event) {
 		const target = e.target as HTMLInputElement;
-		volume = parseFloat(target.value);
+		const parsed = parseFloat(target.value);
+		// 防止 NaN 导致后续逻辑异常
+		if (isNaN(parsed)) return;
+		volume = parsed;
 		isMuted = volume === 0;
 		if (audioEl) audioEl.volume = volume;
 	}
@@ -502,8 +517,9 @@
 							bind:this={progressBar}
 							onclick={onProgressClick}
 							onkeydown={(e) => {
+								if (!audioEl || !duration) return;
 								if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-									if (!audioEl || !duration) return;
+									e.preventDefault();
 									const step = duration * 0.05;
 									audioEl.currentTime =
 										e.key === 'ArrowLeft'
@@ -511,13 +527,24 @@
 											: Math.min(duration, currentTime + step);
 									currentTime = audioEl.currentTime;
 									updateLyricScroll();
+								} else if (e.key === 'Home') {
+									e.preventDefault();
+									audioEl.currentTime = 0;
+									currentTime = 0;
+									updateLyricScroll();
+								} else if (e.key === 'End') {
+									e.preventDefault();
+									audioEl.currentTime = duration;
+									currentTime = duration;
+									updateLyricScroll();
 								}
 							}}
 							role="slider"
 							aria-label="播放进度"
 							aria-valuemin="0"
-							aria-valuemax="100"
-							aria-valuenow={Math.round(progress)}
+							aria-valuemax={duration || 0}
+							aria-valuenow={Math.round(currentTime)}
+							aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
 							tabindex="0"
 						>
 							<div class="mp-progress-track">
@@ -582,6 +609,9 @@
 									value={volume}
 									oninput={onVolumeChange}
 									aria-label="音量"
+									aria-valuemin="0"
+									aria-valuemax="1"
+									aria-valuenow={volume}
 								/>
 							</div>
 							{#if trackList.length > 1}

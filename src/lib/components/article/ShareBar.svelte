@@ -69,19 +69,41 @@
 
 	// 复制链接
 	let copied = $state(false);
+	let copyFailed = $state(false);
 	async function copyLink() {
-		try {
-			await navigator.clipboard.writeText(shareUrl);
-		} catch {
-			const input = document.createElement('input');
-			input.value = shareUrl;
-			document.body.appendChild(input);
-			input.select();
-			document.execCommand('copy');
-			document.body.removeChild(input);
+		copyFailed = false;
+		// 优先使用 Clipboard API（仅在 HTTPS 或 localhost 下可用）
+		if (navigator.clipboard && window.isSecureContext) {
+			try {
+				await navigator.clipboard.writeText(shareUrl);
+				copied = true;
+				setTimeout(() => (copied = false), 2000);
+				return;
+			} catch {
+				/* 回退到 execCommand */
+			}
 		}
-		copied = true;
-		setTimeout(() => (copied = false), 2000);
+		// 回退方案：使用 textarea + execCommand
+		try {
+			const textarea = document.createElement('textarea');
+			textarea.value = shareUrl;
+			textarea.style.position = 'fixed';
+			textarea.style.left = '-9999px';
+			textarea.style.top = '0';
+			textarea.setAttribute('readonly', '');
+			document.body.appendChild(textarea);
+			textarea.select();
+			const ok = document.execCommand('copy');
+			document.body.removeChild(textarea);
+			if (ok) {
+				copied = true;
+				setTimeout(() => (copied = false), 2000);
+			} else {
+				copyFailed = true;
+			}
+		} catch {
+			copyFailed = true;
+		}
 	}
 </script>
 
@@ -132,13 +154,16 @@
 				<!-- 二维码 -->
 				<div class="qr-section">
 					<img src={qrUrl} alt="扫码分享文章" width="140" height="140" loading="lazy" />
-					<span class="qr-tip">微信扫码分享</span>
-				</div>
+			<span class="qr-tip">微信扫码分享</span>
+			</div>
 				<!-- 复制链接 -->
 				<button class="copy-btn" onclick={copyLink}>
 					{#if copied}
 						<Check size="15" strokeWidth="1.6" />
 						<span>已复制</span>
+					{:else if copyFailed}
+						<Copy size="15" strokeWidth="1.6" />
+						<span>复制失败，请手动复制</span>
 					{:else}
 						<Copy size="15" strokeWidth="1.6" />
 						<span>复制链接</span>

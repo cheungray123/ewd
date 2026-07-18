@@ -309,7 +309,7 @@
 			color 0.22s var(--ease),
 			border-color 0.22s var(--ease);
 		font-family: var(--font-mono);
-		font-size: 0.6875rem;
+		font-size: var(--text-xs-2);
 	}
 	.pager button:hover {
 		color: var(--accent);

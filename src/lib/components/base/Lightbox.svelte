@@ -3,22 +3,82 @@
 	import { fade, fly, scale } from 'svelte/transition';
 	import { lightbox } from '$lib/stores/lightbox.svelte';
 	import { easeOut } from '$lib/utils/motion';
+	import { tick } from 'svelte';
+
+	let modalEl = $state<HTMLDivElement | null>(null);
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (!lightbox.open) return;
-		if (e.key === 'Escape') lightbox.close();
-		if (e.key === 'ArrowLeft') lightbox.prev();
-		if (e.key === 'ArrowRight') lightbox.next();
+		if (e.key === 'Escape') {
+			e.preventDefault();
+			lightbox.close();
+		} else if (e.key === 'ArrowLeft') {
+			e.preventDefault();
+			lightbox.prev();
+		} else if (e.key === 'ArrowRight') {
+			e.preventDefault();
+			lightbox.next();
+		} else if (e.key === 'Tab') {
+			// Focus trap：Tab 键在模态框内部循环
+			trapFocus(e);
+		}
 	}
+
+	/** 焦点陷阱：Tab 键在模态框内部可聚焦元素之间循环 */
+	function trapFocus(e: KeyboardEvent) {
+		const root = modalEl;
+		if (!root) return;
+		const focusable = root.querySelectorAll<HTMLElement>(
+			'button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+		);
+		if (focusable.length === 0) {
+			e.preventDefault();
+			root.focus();
+			return;
+		}
+		const first = focusable[0];
+		const last = focusable[focusable.length - 1];
+		const active = document.activeElement as HTMLElement | null;
+
+		if (e.shiftKey) {
+			if (active === first || !root.contains(active)) {
+				e.preventDefault();
+				last.focus();
+			}
+		} else {
+			if (active === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		}
+	}
+
+	// 打开时自动聚焦容器，便于捕获键盘事件并实现焦点陷阱
+	let lastFocused = $state<HTMLElement | null>(null);
+	$effect(() => {
+		if (lightbox.open) {
+			lastFocused = document.activeElement as HTMLElement | null;
+			tick().then(() => modalEl?.focus());
+		} else if (lastFocused) {
+			lastFocused?.focus();
+			lastFocused = null;
+		}
+	});
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
 {#if lightbox.open}
 	<div
+		bind:this={modalEl}
 		class="lightbox"
 		onclick={(e: MouseEvent) => e.target === e.currentTarget && lightbox.close()}
-		onkeydown={(e: KeyboardEvent) => e.key === 'Escape' && lightbox.close()}
+		onkeydown={(e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				lightbox.close();
+			}
+		}}
 		role="dialog"
 		tabindex="-1"
 		aria-modal="true"
@@ -91,6 +151,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+	:global(.lightbox:focus-visible) {
+		outline: none;
 	}
 	.lb-inner {
 		position: relative;
@@ -166,6 +229,7 @@
 	}
 
 	@media (max-width: 680px) {
+		/* 移动端：按钮贴近图片内部边缘，避免负定位溢出容器 */
 		:global(.lb-prev) {
 			left: 0.5rem;
 		}
@@ -173,12 +237,21 @@
 			right: 0.5rem;
 		}
 		:global(.lb-close) {
-			top: -2rem;
+			top: 0.5rem;
 			right: 0.5rem;
+			background: color-mix(in oklch, var(--bg) 60%, transparent);
+			border-radius: var(--r-sm);
+			padding: 0.4rem;
 		}
 		:global(.lb-caption) {
 			bottom: -1.5rem;
 			font-size: 10px;
+		}
+		/* 移动端导航按钮半透明背景，确保在图片上可见 */
+		:global(.lb-nav) {
+			background: color-mix(in oklch, var(--bg) 50%, transparent);
+			backdrop-filter: blur(4px);
+			-webkit-backdrop-filter: blur(4px);
 		}
 	}
 </style>

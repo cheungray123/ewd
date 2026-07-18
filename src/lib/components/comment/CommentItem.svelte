@@ -147,13 +147,17 @@
 			const rect = avatarEl.getBoundingClientRect();
 			const gap = 8;
 			const cardWidth = 200;
-			const cardHeight = nested ? 90 : 160;
+			// 卡片高度根据视口高度自适应，避免小屏幕溢出
+			const maxCardHeight = Math.min(nested ? 90 : 160, window.innerHeight - gap * 2);
+			const cardHeight = maxCardHeight;
 			let left = Math.max(gap, Math.min(rect.left, window.innerWidth - cardWidth - gap));
 			const belowRoom = window.innerHeight - rect.bottom - gap;
 			if (belowRoom >= cardHeight) {
 				cardTop = rect.bottom + gap;
 			} else {
 				cardTop = rect.top - gap - cardHeight;
+				// 如果上方也不够，则顶部对齐
+				if (cardTop < gap) cardTop = gap;
 			}
 			cardLeft = Math.round(left);
 			cardLeaving = false;
@@ -205,17 +209,17 @@
 		scheduleHide();
 	}
 
+	// 滚动时隐藏等级卡片。使用 effect 自动管理监听器生命周期，避免累积。
 	$effect(() => {
-		if (showRankCard) {
-			const onScroll = () => {
-				if (!isHoveringCard) {
-					showRankCard = false;
-					cardLeaving = false;
-				}
-			};
-			window.addEventListener('scroll', onScroll, { passive: true });
-			return () => window.removeEventListener('scroll', onScroll);
-		}
+		if (!showRankCard) return;
+		const onScroll = () => {
+			if (!isHoveringCard) {
+				showRankCard = false;
+				cardLeaving = false;
+			}
+		};
+		window.addEventListener('scroll', onScroll, { passive: true });
+		return () => window.removeEventListener('scroll', onScroll);
 	});
 
 	// 等级卡片使用 position:fixed + z-index，无需 teleport 到 body
@@ -327,9 +331,9 @@
 						{comment.nick}
 					{/if}
 				</span>
-				{#if comment.master}
-					<span class="badge-op">{config.MASTER_TAG || '作者'}</span>
-				{/if}
+			{#if comment.master}
+				<span class="badge-op">{config.MASTER_TAG || '作者'}</span>
+			{/if}
 				{#if comment.top === 1}
 					<span class="badge-top">置顶</span>
 				{/if}
@@ -339,20 +343,18 @@
 				<span class="time">{displayTime}</span>
 			</div>
 			{#if config.LIGHTBOX === 'true'}
-				<div
-					class="text"
-					role="button"
-					tabindex="0"
+				<button
+					type="button"
+					class="text text-clickable"
 					aria-label="评论内容，点击查看图片"
 					onclick={handleContentClick}
-					onkeydown={(e) => e.key === 'Enter' && handleContentClick(e as unknown as MouseEvent)}
 				>
 					{#if comment.replyUser}<span class="reply-to"
 							>@{comment.replyUser.nick ?? comment.replyUser}</span
 						>{/if}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html processedComment}
-				</div>
+				</button>
 			{:else}
 				<div class="text">
 					{#if comment.replyUser}<span class="reply-to"
@@ -570,7 +572,7 @@
 	}
 	.comment .who .name {
 		font-weight: 600;
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		color: var(--fg);
 	}
 	.comment .who .name a {
@@ -616,7 +618,7 @@
 		color: var(--muted);
 	}
 	.comment .text {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		color: var(--dim);
 		line-height: 1.72;
 		margin-top: 0.45rem;
@@ -631,10 +633,17 @@
 		margin-top: 0.3rem;
 		transition: transform 0.2s var(--ease);
 	}
-	.comment .text[role='button'] {
+	.comment .text-clickable {
 		cursor: zoom-in;
+		background: none;
+		border: none;
+		font: inherit;
+		text-align: left;
+		padding: 0;
+		width: 100%;
+		color: var(--dim);
 	}
-	.comment .text[role='button'] :global(img:hover) {
+	.comment .text-clickable :global(img:hover) {
 		transform: scale(1.02);
 	}
 	.reply-to {
@@ -830,7 +839,7 @@
 		gap: 2px;
 	}
 	.rank-card-office {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		font-weight: 700;
 		color: var(--fg);
 		line-height: 1.3;
@@ -863,7 +872,7 @@
 		margin-bottom: 0.125rem;
 	}
 	.rank-card-stat-value {
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 		font-weight: 700;
 		color: var(--fg);
 	}

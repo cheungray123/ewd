@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { tweened } from 'svelte/motion';
 	import { pixelEase } from '$lib/utils/motion';
-	import { untrack } from 'svelte';
 	import { browser } from '$app/environment';
 
 	interface Props {
@@ -20,28 +19,31 @@
 		return { target: parseInt(raw, 10) || 0, useK: false };
 	}
 
-	const { target, useK } = untrack(() => parseTarget(value));
+	// 响应式解析：value 变化时重新计算目标
+	let parsed = $derived(parseTarget(value));
+	let target = $derived(parsed.target);
+	let useK = $derived(parsed.useK);
 
 	// tweened store，初始值为 0，目标值为 target
 	const tween = tweened(0, { duration: 1200, easing: pixelEase });
 
 	// 用 $state 跟踪当前值
 	let current = $state(0);
-	let hasStarted = $state(false);
 
 	// 订阅 tween 更新
 	tween.subscribe((v) => {
 		current = v;
 	});
 
-	// 在浏览器端启动动画
+	// 在浏览器端启动动画，value 变化时重新动画到新目标
 	$effect(() => {
 		if (!browser) return;
 
-		// 重置并启动动画
+		// 重置并启动动画到当前 target
 		tween.set(0);
+		const t = target;
 		const timer = setTimeout(() => {
-			tween.set(target);
+			tween.set(t);
 		}, 400 + delay);
 
 		return () => clearTimeout(timer);

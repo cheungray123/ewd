@@ -91,13 +91,13 @@
 		font-style: italic;
 		font-size: var(--text-xs);
 		letter-spacing: 0.02em;
-		color: color-mix(in oklch, var(--on-accent) 85%, transparent);
+		color: rgba(255, 255, 255, 0.85);
 	}
 	.cap .ttl {
 		font-family: var(--font-body);
 		font-weight: 700;
 		font-size: var(--text-lg);
-		color: var(--on-accent);
+		color: #ffffff;
 		line-height: 1.1;
 	}
 	.view {

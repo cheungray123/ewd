@@ -91,6 +91,11 @@
 			grid-template-columns: repeat(2, 1fr);
 		}
 		:global(.photos) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+	@media (max-width: 680px) {
+		:global(.photos) {
 			grid-template-columns: 1fr;
 		}
 	}

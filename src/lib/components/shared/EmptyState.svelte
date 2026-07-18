@@ -23,13 +23,13 @@
 		text-align: center;
 		padding: 3rem 1rem;
 		color: var(--muted);
-		font-size: 0.8125rem;
+		font-size: var(--text-sm-2);
 	}
 	:global(.reset) {
 		display: block;
 		margin: 1rem auto 0;
 		font-family: var(--font-mono);
-		font-size: 0.6875rem;
+		font-size: var(--text-xs-2);
 		color: var(--accent);
 		background: none;
 		border: var(--pixel-border);

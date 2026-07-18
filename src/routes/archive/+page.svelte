@@ -175,7 +175,7 @@
 	.cat {
 		font-family: var(--font-mono);
 		font-size: 10px;
-		color: var(--faint);
+		color: var(--muted);
 		background: var(--bg);
 		border: var(--pixel-border);
 		padding: 0.2rem 0.5rem;

@@ -145,7 +145,7 @@
 		color: var(--border);
 	}
 	.meta .wc {
-		color: var(--faint);
+		color: var(--muted);
 	}
 	.meta .wc::before {
 		content: '·';
