@@ -5,11 +5,11 @@ import { error } from '@sveltejs/kit';
 export const prerender = true;
 
 export function entries() {
-	return getAllTagSlugs().map((tag) => ({ tag }));
+	return getAllTagSlugs().map((tag) => ({ tag: encodeURIComponent(tag) }));
 }
 
 export const load: PageLoad = ({ params }) => {
-	const tag = params.tag;
+	const tag = decodeURIComponent(params.tag);
 	const posts = getPostsByTag(tag);
 
 	if (posts.length === 0) {
