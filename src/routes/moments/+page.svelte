@@ -24,10 +24,14 @@
 
 	let commentSummaries = $state<Record<string, CommentSummary>>({});
 
-	// 从 URL 读取页码
-	let currentPage = $derived(
-		Math.max(1, parseInt(page.url.searchParams.get('page') ?? '1', 10) || 1)
-	);
+	// 从 URL 读取页码（预渲染时 page.url.searchParams 不可用）
+	let currentPage = $derived.by(() => {
+		try {
+			return Math.max(1, parseInt(page.url.searchParams.get('page') ?? '1', 10) || 1);
+		} catch {
+			return 1;
+		}
+	});
 
 	// 将所有年份段展开为扁平列表以便分页
 	let allNotes = $derived.by<{ note: TimelineNote; year: string }[]>(() => {
