@@ -1,0 +1,1096 @@
+/* =====================================================================
+   像素宇宙（Pixel Universe）设计系统
+   复古像素 × 超现实 × CRT 美学
+   字体通过 Google Fonts 加载（见 app.html）
+   ===================================================================== */
+
+:root {
+	/* ── 色彩 — 暗色模式（默认） ── */
+	--bg: #0a0a1a;
+	--surface: #111128;
+	--surface-h: #161640;
+	--surface-alt: #1a1a3a;
+	--fg: #e8e8f0;
+	--dim: #9090b0;
+	--muted: #6060a0;
+	--faint: #404070;
+	--border: #252550;
+	--border-l: #1c1c3a;
+	--accent: #00ff88;
+	--accent-2: #ff6ec7;
+	--accent-3: #4488ff;
+	--accent-soft: rgba(0, 255, 136, 0.08);
+	--accent-hover: #00cc6a;
+	--link: #00ff88;
+	--ok: #00ff88;
+	--warn: #ffaa00;
+	--code-bg: #08081a;
+	--code-fg: #c0c0e0;
+	--code-gutter: #404060;
+	--code-selection: rgba(0, 255, 136, 0.15);
+	--code-line-highlight: rgba(0, 255, 136, 0.04);
+	--glow: 0 0 12px rgba(0, 255, 136, 0.2);
+	--pixel-grid: rgba(255, 255, 255, 0.03);
+
+	/* ── 字体 ── */
+	/* 像素字体：Press Start 2P（本地）→ 后备像素风格 */
+	--font-pixel: 'Press Start 2P', 'Courier New', monospace;
+
+	/* 正文字体：系统字体栈（优先中文）→ 本地 Geist → 后备 */
+	--font-body:
+		'Noto Sans SC', /* 中文优先 */ 'PingFang SC', /* macOS 中文 */ 'Microsoft YaHei',
+		/* Windows 中文 */ 'Geist', /* 本地现代无衬线 */ -apple-system,
+		/* iOS/macOS 系统 */ BlinkMacSystemFont, /* macOS Chrome */ 'Segoe UI',
+		/* Windows 系统 */ Roboto, /* Android */ 'Helvetica Neue', /* 经典 */ Arial, sans-serif;
+
+	/* 代码字体：JetBrains Mono（几何感强）→ Maple Mono（中文）→ 后备 */
+	--font-mono:
+		'JetBrains Mono', /* 主要代码字体，几何感强 */ 'Maple Mono',
+		/* 中文优化代码字体 */ 'Geist Mono', /* 本地变量字体 */ 'Fira Code',
+		/* 经典连字字体 */ 'Cascadia Code', /* Windows 终端 */ 'SF Mono', /* macOS */ 'Consolas',
+		/* Windows */ 'Menlo', /* macOS 旧版 */ 'Courier New', monospace;
+
+	/* ── 字体大小系统 ── */
+	--text-2xs: 0.4375rem; /* 7px - 最小标签 */
+	--text-xs: 0.625rem; /* 10px - 小标签、元数据 */
+	--text-sm: 0.75rem; /* 12px - 辅助文字 */
+	--text-base: 0.875rem; /* 14px - 正文 */
+	--text-lg: 1rem; /* 16px - 大正文 */
+	--text-xl: 1.25rem; /* 20px - 小标题 */
+	--text-2xl: clamp(1.6rem, 3.5vw, 2.2rem); /* Hero 标题 */
+
+	/* ── 间距 ── */
+	--sp-xs: 0.375rem;
+	--sp-sm: 0.75rem;
+	--sp-md: 1.25rem;
+	--sp-lg: 2rem;
+	--sp-xl: 3.2rem;
+	--sp-2xl: 5rem;
+
+	/* ── 圆角 = 零（像素宇宙无圆角） ── */
+	--r-sm: 0;
+	--r-md: 0;
+	--r-lg: 0;
+
+	/* ── 阴影 — 硬偏移无模糊 ── */
+	--shadow-sm: 2px 2px 0 rgba(0, 0, 0, 0.4);
+	--shadow-md: 4px 4px 0 rgba(0, 0, 0, 0.5);
+	--shadow-lg: 6px 6px 0 rgba(0, 0, 0, 0.5);
+	--pixel-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+	--pixel-shadow-lg: 6px 6px 0 rgba(0, 0, 0, 0.5);
+	--pixel-shadow-hover: 8px 8px 0 rgba(0, 255, 136, 0.3);
+	--pixel-shadow-hover-2: 8px 8px 0 rgba(255, 110, 199, 0.3);
+
+	/* ── 边框 ── */
+	--pixel-border: 2px solid var(--border);
+
+	/* ── 动效 — 像素阶梯缓动 ── */
+	--ease: steps(4, end);
+
+	/* ── 布局 ── */
+	--wrap: 1100px;
+
+	/* ── z-index 层级系统 ── */
+	--z-nav: 300;
+	--z-modal-backdrop: 400;
+	--z-modal: 500;
+
+	/* ── 语义别名 ── */
+
+	--on-accent: #ffffff;
+	--on-accent-2: #ffffff;
+
+	/* ── 装饰渐变（占位头像 / 照片 fallback） ── */
+	--grad-ava-1: linear-gradient(135deg, #9fbcab, #2f5648);
+	--grad-ava-2: linear-gradient(135deg, #bcd0c8, #4d7d68);
+	--grad-ava-3: linear-gradient(135deg, #cdd9d4, #7a9c92);
+	--grad-photo-1: linear-gradient(160deg, #d4dcd8 0%, #8aaa9e 30%, #4d7d68 55%, #2f5648 100%);
+	--grad-photo-2: linear-gradient(145deg, #c4b89a 0%, #9fbcab 35%, #4d7d68 65%, #2f5648 100%);
+	--grad-photo-3: linear-gradient(130deg, #f0e6d8 0%, #e0c3a4 30%, #bd8a63 60%, #8f5e3e 100%);
+
+	/* ── 导航栏 ── */
+	--nav-h: 52px;
+	--nav-bg: color-mix(in oklch, var(--bg) 92%, transparent);
+	--nav-blur: blur(8px);
+	--nav-brand-glow: 2px 2px 0 rgba(0, 255, 136, 0.15);
+
+	/* ── 装饰虚线 ── */
+	--dashed-accent: repeating-linear-gradient(
+		90deg,
+		var(--accent) 0,
+		var(--accent) 8px,
+		transparent 8px,
+		transparent 16px
+	);
+	--dashed-accent-2: repeating-linear-gradient(
+		90deg,
+		var(--accent-2) 0,
+		var(--accent-2) 8px,
+		transparent 8px,
+		transparent 16px
+	);
+	--dashed-accent-3: repeating-linear-gradient(
+		90deg,
+		var(--accent-3) 0,
+		var(--accent-3) 8px,
+		transparent 8px,
+		transparent 16px
+	);
+	--dashed-divider: 1px dashed rgba(255, 255, 255, 0.06);
+	--solid-divider: 2px solid rgba(255, 255, 255, 0.04);
+
+	/* ── 响应式断点（文档参考，@media 须直接写值）
+	   --bp-lg: 900px  桌面 → 平板
+	   --bp-md: 680px  平板 → 手机
+	   --bp-sm: 600px  手机
+	   --bp-xs: 440px  小手机
+	*/
+}
+
+/* ── 浅色模式覆盖 ── */
+[data-theme='light'] {
+	/* 基础颜色 */
+	--bg: #f5f3ee;
+	--surface: #ffffff;
+	--surface-h: #f0eee8;
+	--surface-alt: #eee9e0;
+	--fg: #1a1a2e;
+	--dim: #4a4a6a;
+	--muted: #7070a0;
+	--faint: #a0a0c0;
+	--border: #d0d0e0;
+	--border-l: #e0e0ea;
+
+	/* 强调色 */
+	--accent: #0a7a4a;
+	--accent-2: #c04080;
+	--accent-3: #2060c0;
+	--accent-soft: rgba(10, 122, 74, 0.08);
+	--accent-hover: #086a3e;
+	--link: #0a7a4a;
+	--ok: #0a7a4a;
+	--warn: #c08020;
+
+	/* 代码块 */
+	--code-bg: #1a1a2e;
+	--code-fg: #d0d0e0;
+	--code-gutter: #6060a0;
+	--code-selection: rgba(10, 122, 74, 0.2);
+	--code-line-highlight: rgba(10, 122, 74, 0.06);
+
+	/* 效果 */
+	--glow: none;
+	--pixel-grid: rgba(0, 0, 0, 0.03);
+
+	/* 阴影 */
+	--shadow-sm: 2px 2px 0 rgba(0, 0, 0, 0.08);
+	--shadow-md: 4px 4px 0 rgba(0, 0, 0, 0.1);
+	--shadow-lg: 6px 6px 0 rgba(0, 0, 0, 0.12);
+	--pixel-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+	--pixel-shadow-lg: 6px 6px 0 rgba(0, 0, 0, 0.12);
+	--pixel-shadow-hover: 8px 8px 0 rgba(10, 122, 74, 0.3);
+	--pixel-shadow-hover-2: 8px 8px 0 rgba(0, 0, 0, 0.12);
+
+	/* 边框 */
+	--pixel-border: 2px solid var(--border);
+
+	/* 语义别名 */
+	--on-accent: #0a0a1a;
+	--on-accent-2: #0a0a1a;
+
+	/* 装饰渐变 */
+	--grad-ava-1: linear-gradient(135deg, #9fbcab, #2f5648);
+	--grad-ava-2: linear-gradient(135deg, #bcd0c8, #4d7d68);
+	--grad-ava-3: linear-gradient(135deg, #cdd9d4, #7a9c92);
+	--grad-photo-1: linear-gradient(160deg, #d4dcd8 0%, #8aaa9e 30%, #4d7d68 55%, #2f5648 100%);
+	--grad-photo-2: linear-gradient(145deg, #c4b89a 0%, #9fbcab 35%, #4d7d68 65%, #2f5648 100%);
+	--grad-photo-3: linear-gradient(130deg, #f0e6d8 0%, #e0c3a4 30%, #bd8a63 60%, #8f5e3e 100%);
+
+	/* 导航栏 */
+	--nav-bg: color-mix(in oklch, var(--bg) 92%, transparent);
+	--nav-blur: blur(8px);
+	--nav-brand-glow: 2px 2px 0 rgba(10, 122, 74, 0.15);
+
+	/* 装饰虚线 */
+	--dashed-accent: repeating-linear-gradient(
+		90deg,
+		var(--accent) 0,
+		var(--accent) 8px,
+		transparent 8px,
+		transparent 16px
+	);
+	--dashed-accent-2: repeating-linear-gradient(
+		90deg,
+		var(--accent-2) 0,
+		var(--accent-2) 8px,
+		transparent 8px,
+		transparent 16px
+	);
+	--dashed-accent-3: repeating-linear-gradient(
+		90deg,
+		var(--accent-3) 0,
+		var(--accent-3) 8px,
+		transparent 8px,
+		transparent 16px
+	);
+	--dashed-divider: 1px dashed rgba(0, 0, 0, 0.08);
+	--solid-divider: 2px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ===== RESET ===== */
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	scroll-behavior: smooth;
+	background: var(--bg);
+}
+
+body {
+	background:
+		var(--pixel-grid) repeat,
+		radial-gradient(120% 80% at 85% -10%, var(--accent-soft), transparent 55%),
+		var(--bg);
+	color: var(--fg);
+	font-family: var(--font-body);
+	font-size: 14px;
+	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+	padding: 0 clamp(20px, 4vw, 48px);
+	position: relative;
+}
+
+/* ===== CRT 扫描线叠加层 ===== */
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	pointer-events: none;
+	background: repeating-linear-gradient(
+		0deg,
+		transparent,
+		transparent 2px,
+		rgba(0, 0, 0, 0.03) 2px,
+		rgba(0, 0, 0, 0.03) 4px
+	);
+}
+
+[data-theme='light'] body::after {
+	background: repeating-linear-gradient(
+		0deg,
+		transparent,
+		transparent 2px,
+		rgba(0, 0, 0, 0.015) 2px,
+		rgba(0, 0, 0, 0.015) 4px
+	);
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+/* ===== 焦点与无障碍 ===== */
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+::selection {
+	background: var(--accent);
+	color: #0a0a1a;
+}
+
+[data-theme='light'] ::selection {
+	color: #fff;
+}
+
+/* ===== 滚动条 ===== */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 4px;
+}
+::-webkit-scrollbar-track {
+	background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+	background: var(--border);
+	border: 2px solid var(--bg);
+}
+::-webkit-scrollbar-thumb:hover {
+	background: var(--accent);
+}
+
+/* ===== 布局容器 ===== */
+.wrap {
+	max-width: var(--wrap);
+	margin: 0 auto;
+	position: relative;
+	z-index: 1;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ===== 跳过导航（WCAG 2.4.1） ===== */
+.skip-link {
+	position: fixed;
+	top: 0.6rem;
+	left: 0.6rem;
+	z-index: 200;
+	background: var(--accent);
+	color: var(--on-accent);
+	font-family: var(--font-mono);
+	font-size: 10px;
+	letter-spacing: 0.04em;
+	padding: 0.5rem 0.95rem;
+	text-decoration: none;
+	transform: translateY(-170%);
+	transition: transform 0.2s var(--ease);
+}
+.skip-link:focus {
+	transform: none;
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+/* ===== 氛围装饰层 ===== */
+.ambient {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: radial-gradient(125% 120% at 50% 36%, transparent 52%, rgba(10, 10, 26, 0.15) 100%);
+}
+.dot {
+	position: absolute;
+	background: var(--accent);
+	pointer-events: none;
+}
+.dot:nth-child(1) {
+	width: 4px;
+	height: 4px;
+	top: 12%;
+	left: 8%;
+	opacity: 0.22;
+}
+.dot:nth-child(2) {
+	width: 3px;
+	height: 3px;
+	top: 22%;
+	left: 46%;
+	opacity: 0.16;
+	background: var(--fg);
+}
+.dot:nth-child(3) {
+	width: 5px;
+	height: 5px;
+	top: 33%;
+	left: 88%;
+	opacity: 0.18;
+}
+.dot:nth-child(4) {
+	width: 3px;
+	height: 3px;
+	top: 48%;
+	left: 18%;
+	opacity: 0.2;
+}
+.dot:nth-child(5) {
+	width: 4px;
+	height: 4px;
+	top: 58%;
+	left: 73%;
+	opacity: 0.15;
+	background: var(--fg);
+}
+.dot:nth-child(6) {
+	width: 3px;
+	height: 3px;
+	top: 67%;
+	left: 38%;
+	opacity: 0.22;
+}
+.dot:nth-child(7) {
+	width: 5px;
+	height: 5px;
+	top: 76%;
+	left: 90%;
+	opacity: 0.14;
+}
+.dot:nth-child(8) {
+	width: 3px;
+	height: 3px;
+	top: 84%;
+	left: 12%;
+	opacity: 0.18;
+	background: var(--fg);
+}
+.dot:nth-child(9) {
+	width: 4px;
+	height: 4px;
+	top: 9%;
+	left: 64%;
+	opacity: 0.16;
+}
+.dot:nth-child(10) {
+	width: 3px;
+	height: 3px;
+	top: 40%;
+	left: 55%;
+	opacity: 0.2;
+}
+.dot:nth-child(11) {
+	width: 4px;
+	height: 4px;
+	top: 62%;
+	left: 28%;
+	opacity: 0.14;
+	background: var(--fg);
+}
+.dot:nth-child(12) {
+	width: 3px;
+	height: 3px;
+	top: 90%;
+	left: 66%;
+	opacity: 0.2;
+}
+
+[data-theme='light'] .ambient {
+	background: radial-gradient(
+		125% 120% at 50% 38%,
+		var(--accent-soft) 0%,
+		transparent 46%,
+		rgba(0, 0, 0, 0.03) 100%
+	);
+}
+
+/* ===== 装饰性虚线（板块顶部） ===== */
+.deco-dash-accent,
+.deco-dash-accent-2 {
+	height: 3px;
+	margin-bottom: 1rem;
+	opacity: 0.7;
+	border-radius: 1px;
+}
+.deco-dash-accent {
+	background: var(--dashed-accent);
+}
+.deco-dash-accent-2 {
+	background: var(--dashed-accent-2);
+}
+
+/* ===== 像素分割线（Footer 顶部） ===== */
+.pixel-divider {
+	height: 4px;
+	margin-bottom: var(--sp-md);
+	background: repeating-linear-gradient(
+		90deg,
+		var(--accent) 0,
+		var(--accent) 12px,
+		transparent 12px,
+		transparent 24px,
+		var(--accent-2) 24px,
+		var(--accent-2) 36px,
+		transparent 36px,
+		transparent 48px,
+		var(--accent-3) 48px,
+		var(--accent-3) 60px,
+		transparent 60px,
+		transparent 72px,
+		var(--surface-alt) 72px,
+		var(--surface-alt) 84px,
+		transparent 84px,
+		transparent 96px,
+		var(--accent) 96px,
+		var(--accent) 108px,
+		transparent 108px,
+		transparent 120px,
+		var(--accent-2) 120px,
+		var(--accent-2) 132px,
+		transparent 132px,
+		transparent 144px,
+		var(--muted) 144px,
+		var(--muted) 156px,
+		transparent 156px,
+		transparent 168px,
+		var(--surface-alt) 168px,
+		var(--surface-alt) 180px,
+		transparent 180px,
+		transparent 192px
+	);
+}
+
+/* ===== 浮动扫描线（Hero / Quote 区域） ===== */
+.float-scanline {
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--accent), transparent);
+	opacity: 0.12;
+	animation: scanline-move 6s linear infinite;
+	pointer-events: none;
+	z-index: -3;
+}
+
+/* ===== 通用工具类 ===== */
+.tag-pill {
+	display: inline-block;
+	font-family: var(--font-pixel);
+	font-size: 7px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	padding: 0.3rem 0.55rem;
+}
+.tag-pill.acc {
+	background: var(--accent-soft);
+	color: var(--accent);
+}
+.tag-pill.ok {
+	background: var(--accent-soft);
+	color: var(--ok);
+}
+.tag-pill.line {
+	border: var(--pixel-border);
+	color: var(--muted);
+}
+
+/* ===== 按钮系统 ===== */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-family: var(--font-pixel);
+	font-size: 8px;
+	letter-spacing: 0.04em;
+	padding: 0.5rem 0.9rem;
+	cursor: pointer;
+	border: 2px solid var(--border);
+	background: var(--surface);
+	color: var(--fg);
+	transition:
+		border-color 0.2s var(--ease),
+		color 0.2s var(--ease),
+		transform 0.2s var(--ease),
+		box-shadow 0.2s var(--ease);
+	box-shadow: var(--pixel-shadow);
+}
+.btn:hover {
+	border-color: var(--accent);
+	color: var(--accent);
+	transform: translate(-2px, -2px);
+	box-shadow: var(--pixel-shadow-hover);
+}
+.btn.primary {
+	background: var(--accent);
+	color: var(--on-accent);
+	border-color: var(--accent);
+}
+.btn.primary:hover {
+	background: var(--accent-hover);
+	color: var(--on-accent);
+	transform: translate(-1px, -1px);
+	box-shadow: 2px 2px 0 color-mix(in oklch, var(--accent) 30%, transparent);
+}
+
+/* ===== Shiki 代码高亮（双主题跟随 data-theme 切换） ===== */
+.shiki,
+.shiki span {
+	color: var(--shiki-light);
+	background-color: var(--shiki-light-bg);
+}
+[data-theme='dark'] .shiki,
+[data-theme='dark'] .shiki span {
+	color: var(--shiki-dark);
+	background-color: var(--shiki-dark-bg);
+}
+
+/* ===== 代码块样式 - Terminal 终端风格 ===== */
+.prose pre {
+	position: relative;
+	background: var(--surface);
+	border: var(--pixel-border);
+	box-shadow: var(--pixel-shadow);
+	margin: 1.5rem 0;
+	padding: 0;
+	overflow: hidden;
+	border-radius: var(--r-md);
+}
+
+/* 语言标签 - Terminal 风格 */
+.prose pre[data-language]::after {
+	content: attr(data-language);
+	position: absolute;
+	top: 0;
+	left: 60px;
+	height: 32px;
+	line-height: 32px;
+	color: var(--muted);
+	font-family: var(--font-pixel);
+	font-size: 0.55rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	z-index: 2;
+}
+
+/* Terminal 三个点 */
+.prose pre[data-language]::before {
+	content: '';
+	position: absolute;
+	top: 10px;
+	left: 14px;
+	width: 8px;
+	height: 8px;
+	background: var(--accent);
+	border: 2px solid var(--accent);
+	box-shadow:
+		14px 0 0 var(--accent-2),
+		14px 0 0 2px var(--accent-2),
+		28px 0 0 var(--accent-3),
+		28px 0 0 2px var(--accent-3);
+	z-index: 2;
+}
+
+/* 行号 */
+.prose pre .line-numbers {
+	position: absolute;
+	left: 0;
+	top: 32px;
+	bottom: 0;
+	width: 2.5rem;
+	padding: 0.75rem 0.4rem;
+	background: transparent;
+	color: var(--code-gutter);
+	font-family: var(--font-mono);
+	font-size: 0.7rem;
+	line-height: 1.8;
+	text-align: right;
+	user-select: none;
+	border-right: 1px solid var(--border-l);
+}
+
+/* 代码内容区域 */
+.prose pre code {
+	display: block;
+	padding: 0.75rem 1rem;
+	overflow-x: auto;
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	line-height: 1.8;
+	tab-size: 4;
+}
+
+/* 行高亮 */
+.prose pre .highlighted {
+	background: var(--code-line-highlight);
+	display: block;
+	margin: 0 -1rem;
+	padding: 0 1rem;
+}
+
+/* 行号与代码对齐 */
+.prose pre code .line {
+	display: block;
+}
+
+/* 选择区域 */
+.prose pre ::selection,
+.prose pre *::selection {
+	background: var(--code-selection);
+}
+
+/* 复制按钮 - Terminal 风格 */
+.prose pre .copy-btn {
+	position: absolute;
+	top: 6px;
+	right: 8px;
+	opacity: 0;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	color: var(--muted);
+	font-family: var(--font-mono);
+	font-size: 0.6rem;
+	padding: 0.2rem 0.5rem;
+	cursor: pointer;
+	transition:
+		opacity 0.2s var(--ease),
+		color 0.2s var(--ease),
+		border-color 0.2s var(--ease);
+	z-index: 3;
+}
+.prose pre:hover .copy-btn {
+	opacity: 1;
+}
+.prose pre .copy-btn:hover {
+	color: var(--accent);
+	border-color: var(--accent);
+	background: var(--accent-soft);
+}
+.prose pre .copy-btn.copied {
+	color: var(--ok);
+	border-color: var(--ok);
+	opacity: 1;
+}
+
+/* 展开按钮 */
+.prose pre .expand-btn {
+	display: block;
+	width: 100%;
+	padding: 0.4rem;
+	margin-top: 0;
+	background: var(--surface-h);
+	border: none;
+	border-top: 1px solid var(--border);
+	color: var(--muted);
+	font-family: var(--font-mono);
+	font-size: 0.625rem;
+	text-align: center;
+	cursor: pointer;
+	transition:
+		background 0.2s var(--ease),
+		color 0.2s var(--ease);
+}
+.prose pre .expand-btn:hover {
+	background: var(--surface-alt);
+	color: var(--accent);
+}
+
+/* 展开状态 */
+.prose pre.code-expanded {
+	max-height: none;
+}
+.prose pre.code-expanded .expand-btn {
+	position: relative;
+}
+
+/* 内联代码 - Terminal 风格 */
+.prose :not(pre) > code {
+	font-family: var(--font-mono);
+	font-size: 0.85em;
+	background: var(--surface);
+	color: var(--accent);
+	padding: 0.15rem 0.4rem;
+	border: 1px solid var(--border);
+	border-radius: var(--r-sm);
+}
+
+/* 标题锚点链接 */
+.heading-anchor {
+	margin-left: 0.5rem;
+	opacity: 0;
+	text-decoration: none;
+	color: var(--accent);
+	font-size: 0.8em;
+	transition: opacity 0.2s var(--ease);
+}
+h2:hover .heading-anchor,
+h3:hover .heading-anchor {
+	opacity: 1;
+}
+
+/* ===== 暗色模式全局覆盖 ===== */
+[data-theme='dark'] .btn.primary,
+[data-theme='dark'] .btn.primary:hover,
+[data-theme='dark'] ::selection {
+	color: var(--on-accent);
+}
+
+/* ===== 关键帧动画 ===== */
+@keyframes pixel-breathe {
+	0%,
+	100% {
+		opacity: 0.8;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes pixel-glow {
+	0%,
+	100% {
+		text-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+	}
+	50% {
+		text-shadow: 0 0 16px rgba(0, 255, 136, 0.4);
+	}
+}
+
+@keyframes scanline-move {
+	0% {
+		top: -100%;
+	}
+	100% {
+		top: 200%;
+	}
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4);
+	}
+	50% {
+		transform: scale(1.4);
+		box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
+	}
+}
+
+@keyframes pulse-dot {
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4);
+	}
+	50% {
+		transform: scale(1.4);
+		box-shadow: 0 0 0 6px rgba(0, 255, 136, 0);
+	}
+}
+
+@keyframes pixel-bounce {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes hero-title-breathe {
+	0%,
+	100% {
+		opacity: 0.9;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes pixel-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.3;
+	}
+}
+
+@keyframes ticker-scroll {
+	0% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
+}
+
+/* ===== View Transitions ===== */
+@media (prefers-reduced-motion: no-preference) {
+	.page-content {
+		view-transition-name: page-content;
+	}
+	::view-transition-old(page-content) {
+		animation: vt-fade-out 0.28s var(--ease) both;
+	}
+	::view-transition-new(page-content) {
+		animation: vt-fade-in 0.36s var(--ease) both;
+	}
+	@keyframes vt-fade-out {
+		to {
+			opacity: 0;
+			transform: translateY(-8px);
+			filter: blur(6px);
+		}
+	}
+	@keyframes vt-fade-in {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+			filter: blur(6px);
+		}
+		to {
+			filter: blur(0);
+		}
+	}
+}
+
+/* ===== Scroll Reveal ===== */
+.reveal {
+	opacity: 0;
+	transform: translateY(12px) translateZ(0);
+	transition:
+		opacity 0.15s var(--ease),
+		transform 0.15s var(--ease);
+	backface-visibility: hidden;
+}
+.reveal.in {
+	opacity: 1;
+	transform: translateY(0) translateZ(0);
+}
+.reveal--left {
+	transform: translateX(-24px) translateZ(0);
+}
+.reveal--right {
+	transform: translateX(24px) translateZ(0);
+}
+.reveal--scale {
+	transform: scale(0.94) translateZ(0);
+}
+.reveal--fade {
+	transform: translateZ(0);
+}
+
+/* ===== Hero 入场动画 ===== */
+@keyframes hero-slide-left {
+	from {
+		opacity: 0;
+		transform: translateX(-24px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@keyframes hero-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* ===== 触摸设备交互反馈 ===== */
+@media (hover: none) and (pointer: coarse) {
+	.post:active,
+	.photo:active,
+	.h-card:active,
+	.h-stat:active,
+	.h-moment:active {
+		transform: scale(0.98);
+		transition: transform 0.1s var(--ease);
+	}
+	.nav-menu a:active {
+		background: var(--accent-soft);
+	}
+}
+
+/* ===== reduced motion ===== */
+@media (prefers-reduced-motion: reduce) {
+	/* 纯装饰性动画：完全禁用 */
+	body::after {
+		display: none;
+	}
+	.float-scanline,
+	.ambient .dot {
+		animation: none;
+	}
+
+	/* 所有过渡/动画：瞬间完成而非消失，保留功能性类名切换 */
+	* {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	/* reveal 元素：移除过渡延迟，但仍依赖 IntersectionObserver 添加 .in */
+	.reveal {
+		transition: none;
+	}
+
+	/* 状态栏：停止滚动，改为静态展示 */
+	.status .track {
+		animation: none;
+		flex-wrap: wrap;
+		white-space: normal;
+	}
+	.status .ticker {
+		-webkit-mask-image: none;
+		mask-image: none;
+	}
+	.status .seq {
+		flex: 1 1 auto;
+		padding-right: 0;
+	}
+	.status .seq + .seq {
+		display: none;
+	}
+
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+	.nav,
+	.foot,
+	.ambient,
+	.toc,
+	.comments,
+	.progress-bar,
+	.share-bar,
+	.pager-prevnext,
+	.related-posts,
+	.breadcrumb,
+	.skip-link,
+	body::after {
+		display: none !important;
+	}
+	body {
+		background: #fff !important;
+		color: #000 !important;
+		padding: 0 !important;
+		animation: none !important;
+	}
+	.article {
+		display: block !important;
+	}
+	.prose pre {
+		white-space: pre-wrap !important;
+		word-wrap: break-word !important;
+		background: #f5f5f5 !important;
+		color: #333 !important;
+		box-shadow: none !important;
+		border: 1px solid #ddd !important;
+	}
+	.prose a::after {
+		content: ' (' attr(href) ')';
+		font-size: 0.85em;
+		color: #666;
+	}
+	.prose img,
+	.author-card,
+	.copyright-notice,
+	.prose pre,
+	.prose blockquote {
+		break-inside: avoid;
+	}
+	.prose h2,
+	.prose h3 {
+		break-after: avoid;
+	}
+	* {
+		box-shadow: none !important;
+	}
+}

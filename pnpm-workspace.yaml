@@ -1,0 +1,6 @@
+allowBuilds:
+  sharp: false
+onlyBuiltDependencies:
+  - '@resvg/resvg-js'
+  - esbuild
+  - sharp

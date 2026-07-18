@@ -1,0 +1,72 @@
+/**
+ * 本地字体配置
+ * 赛博朋克/像素风格字体系统
+ */
+
+/* ===== Press Start 2P - 像素标题字体 ===== */
+@font-face {
+	font-family: 'Press Start 2P';
+	src: url('./PressStart2P-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* ===== JetBrains Mono - 代码字体（几何感强，连字丰富） ===== */
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('./JetBrainsMono-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('./JetBrainsMono-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('./JetBrainsMono-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* ===== Maple Mono - 中文优化代码字体（回退用） ===== */
+@font-face {
+	font-family: 'Maple Mono';
+	src: url('./MapleMono-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Maple Mono';
+	src: url('./MapleMono-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* ===== Geist - 现代无衬线（已存在） ===== */
+@font-face {
+	font-family: 'Geist';
+	src: url('./Geist-Variable.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Geist Mono';
+	src: url('./GeistMono-Variable.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
