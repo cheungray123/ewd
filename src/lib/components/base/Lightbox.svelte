@@ -102,7 +102,6 @@
 		max-height: 85vh;
 		border-radius: var(--r-md);
 		overflow: hidden;
-		box-shadow: var(--shadow-lg);
 		position: relative;
 	}
 	.lb-stage :global(img) {
