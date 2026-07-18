@@ -26,6 +26,11 @@ export interface LyricLine {
 	text: string;
 }
 
+/** 强制 URL 使用 HTTPS 协议，避免混合内容被浏览器拦截 */
+function ensureHttps(url: string): string {
+	return url.replace(/^http:\/\//i, 'https://');
+}
+
 /** 简易 fetch 封装 */
 async function fetchJson<T>(path: string, params: Record<string, string>): Promise<T> {
 	const url = new URL(`${BASE}${path}`);
@@ -66,8 +71,7 @@ export async function getSongDetail(
 		name: s.name,
 		artist: (s.ar || s.artists || []).map((a) => a.name).join(' / '),
 		album: s.al?.name || s.album?.name || '',
-		cover:
-			(s.al?.picUrl || s.album?.picUrl || '').replace('http://', 'https://') + '?param=300x300',
+		cover: ensureHttps(s.al?.picUrl || s.album?.picUrl || '') + '?param=300x300',
 		duration: s.dt || s.duration || 0
 	}));
 }
@@ -84,7 +88,9 @@ export async function getSongUrl(id: string | number): Promise<string | null> {
 	}>('/song_url', { id: String(id), br: '320000' });
 
 	const item = data.data?.find((d) => d.id === Number(id));
-	return item?.url || null;
+	const url = item?.url;
+	// 网易云返回的音频地址通常是 http://，在 HTTPS 站点会被 Mixed Content 拦截，强制升级
+	return url ? ensureHttps(url) : null;
 }
 
 /**
@@ -135,8 +141,7 @@ export async function getPlaylistTracks(
 		name: s.name,
 		artist: (s.ar || s.artists || []).map((a) => a.name).join(' / '),
 		album: s.al?.name || s.album?.name || '',
-		cover:
-			(s.al?.picUrl || s.album?.picUrl || '').replace('http://', 'https://') + '?param=300x300',
+		cover: ensureHttps(s.al?.picUrl || s.album?.picUrl || '') + '?param=300x300',
 		duration: s.dt || s.duration || 0
 	}));
 }
@@ -164,7 +169,7 @@ export async function getPlaylistInfo(playlistId: string | number): Promise<{
 	const p = data.playlist;
 	return {
 		name: p.name,
-		cover: (p.coverImgUrl || p.picUrl || '').replace('http://', 'https://') + '?param=300x300',
+		cover: ensureHttps(p.coverImgUrl || p.picUrl || '') + '?param=300x300',
 		trackCount: p.trackCount
 	};
 }
@@ -197,8 +202,7 @@ export async function getRecommendSongs(): Promise<SongInfo[]> {
 		name: s.name,
 		artist: (s.ar || s.artists || []).map((a) => a.name).join(' / '),
 		album: s.al?.name || s.album?.name || '',
-		cover:
-			(s.al?.picUrl || s.album?.picUrl || '').replace('http://', 'https://') + '?param=300x300',
+		cover: ensureHttps(s.al?.picUrl || s.album?.picUrl || '') + '?param=300x300',
 		duration: s.dt || s.duration || 0
 	}));
 }
