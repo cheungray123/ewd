@@ -27,8 +27,7 @@ export const tickerItems: TickerItem[][] = [
 ];
 
 /** 广播完整文本（用于 sr-only） */
-export const tickerSrText =
-	'站点广播：博客在线运行中，已持续 7 年，当前主题 Pixel Universe。';
+export const tickerSrText = '站点广播：博客在线运行中，已持续 7 年，当前主题 Pixel Universe。';
 
 /** Hero 精简统计项配置（数值在运行时填充） */
 export const heroStatsConfig: HeroStat[] = [
@@ -133,7 +132,7 @@ export const milestones: Milestone[] = [
 export const aboutSite = {
 	desc: '纯静态、Svelte 框架。设计语言统一在 app.css 一套 design token 里，首页、列表、详情、相册、说说、归档全部复用，所以你不会在这里看到「换了个设计师」的割裂感。配色是赛博绿 + 霓虹粉 + 电光蓝，暗色为主，像深夜显示器上的荧光。',
 	links: [
-		{ label: 'Email', href: '7af39971a8888e6b' },
+		{ label: 'Email', href: 'mailto:7af39971a8888e6b' },
 		{ label: 'GitHub', href: 'https://github.com/cheungray123' },
 		{ label: 'RSS', href: '/rss.xml' }
 	]
