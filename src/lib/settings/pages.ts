@@ -1,4 +1,4 @@
-import type { HeroStat, TickerItem, Skill, Milestone } from '$lib/types';
+import type { HeroStat, Skill, Milestone } from '$lib/types';
 
 /* ============================================================
  *  首页配置
@@ -12,22 +12,8 @@ export const heroConfig = {
 	subtitle: '写代码、记生活，偶尔拍点照片。下面是这个博客的实时账本——三种内容，一种慢慢过的日子。'
 } as const;
 
-/** 广播滚动条目 */
-export const tickerItems: TickerItem[][] = [
-	[
-		{ text: '在线 · 博客运行中' },
-		{ text: '已持续 ', value: '2 年' },
-		{ text: '南京 ', clock: true }
-	],
-	[
-		{ text: '在线 · 博客运行中' },
-		{ text: '已持续 ', value: '2 年' },
-		{ text: '南京 ', clock: true }
-	]
-];
-
 /** 广播完整文本（用于 sr-only） */
-export const tickerSrText = '站点广播：博客在线运行中，已持续 7 年，当前主题 Pixel Universe。';
+export const tickerSrText = '新主题 Pixel Universe 已上线，大家发现不足或Bug请在评论区留言。';
 
 /** Hero 精简统计项配置（数值在运行时填充） */
 export const heroStatsConfig: HeroStat[] = [

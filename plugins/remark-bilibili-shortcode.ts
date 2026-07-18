@@ -56,41 +56,111 @@ function isSingleTextParagraph(
 	return meaningful.length === 1 && meaningful[0].type === 'text';
 }
 
-/** 解析属性字符串，返回键值对 */
+/**
+ * 解析属性字符串，返回键值对
+ *
+ * 引号支持半角（" '）和全角（" " ' '），
+ * 因为 smartypants 可能在 remark 插件运行前将英文引号转为中文全角引号。
+ */
+
+/** 开引号 → 对应闭引号的映射（半角引号开闭相同，全角引号开闭不同） */
+const CLOSE_QUOTE: Record<string, string> = {
+	'"': '"',
+	"'": "'",
+	'\u201C': '\u201D', // " → "
+	'\u201D': '\u201C', // " → "（容错）
+	'\u2018': '\u2019', // ' → '
+	'\u2019': '\u2018'  // ' → '（容错）
+};
+
+/** 所有支持的引号字符（开+闭） */
+const QUOTE_CHARS = '["\'\u201C\u201D\u2018\u2019]';
+
+/** 从被引号包裹的字符串中提取内容，返回 { value, endIndex } */
+function extractQuotedValue(str: string, startIdx: number): { value: string; endIndex: number } | null {
+	const openQuote = str[startIdx];
+	const closeQuote = CLOSE_QUOTE[openQuote] || openQuote;
+	const closeIdx = str.indexOf(closeQuote, startIdx + 1);
+	if (closeIdx !== -1) {
+		return { value: str.slice(startIdx + 1, closeIdx), endIndex: closeIdx + 1 };
+	}
+	// 未找到闭引号，取到下一个空格或字符串末尾
+	const spaceIdx = str.indexOf(' ', startIdx + 1);
+	const end = spaceIdx !== -1 ? spaceIdx : str.length;
+	return { value: str.slice(startIdx + 1, end), endIndex: end };
+}
+
+/** 解析剩余属性参数（key="value" / key=value / 布尔 key），引号支持半角和全角 */
+function parseRemainingAttrs(str: string): Record<string, string> {
+	const attrs: Record<string, string> = {};
+	// 先匹配 key= 或单独的 key（布尔属性）
+	const re = new RegExp(`(\\w+)(=)?`, 'g');
+	let m: RegExpExecArray | null;
+	while ((m = re.exec(str)) !== null) {
+		const key = m[1];
+		const hasEqual = m[2];
+		if (hasEqual) {
+			// 有等号，检查下一个字符是否为引号
+			const afterEqual = m.index + m[0].length;
+			const nextChar = str[afterEqual];
+			if (nextChar && new RegExp(QUOTE_CHARS).test(nextChar)) {
+				// 引号包裹的值
+				const result = extractQuotedValue(str, afterEqual);
+				if (result) {
+					attrs[key] = result.value;
+					re.lastIndex = result.endIndex;
+				} else {
+					attrs[key] = '';
+				}
+			} else {
+				// 无引号的值（取到下一个空格或字符串末尾）
+				const spaceIdx = str.indexOf(' ', afterEqual);
+				const end = spaceIdx !== -1 ? spaceIdx : str.length;
+				attrs[key] = str.slice(afterEqual, end);
+				re.lastIndex = end;
+			}
+		} else {
+			// 布尔属性
+			attrs[key] = '';
+		}
+	}
+	return attrs;
+}
+
 function parseAttributes(attrStr: string): Record<string, string> | null {
 	const attrs: Record<string, string> = {};
 	const trimmed = attrStr.trim();
 
-	// 尝试匹配 URL 格式
-	const urlMatch = trimmed.match(/^url=["'](https?:\/\/www\.bilibili\.com\/video\/(BV[\w]+))["']/i);
+	// 尝试匹配 URL 格式：url="https://www.bilibili.com/video/BVxxx"
+	const urlMatch = trimmed.match(new RegExp(`^url=(${QUOTE_CHARS})`, 'i'));
 	if (urlMatch) {
-		attrs.bvid = urlMatch[2];
-		// 解析剩余参数
-		const remaining = trimmed.slice(urlMatch[0].length).trim();
-		if (remaining) {
-			const re = /(\w+)(?:=["']([^"']*)["'])?/g;
-			let m: RegExpExecArray | null;
-			while ((m = re.exec(remaining)) !== null) {
-				attrs[m[1]] = m[2] ?? '';
+		const quoteResult = extractQuotedValue(trimmed, urlMatch[0].length - 1);
+		if (quoteResult) {
+			const url = quoteResult.value;
+			const bvidMatch = url.match(/BV[\w]+/i);
+			if (bvidMatch) {
+				attrs.bvid = bvidMatch[0];
+				const remaining = trimmed.slice(quoteResult.endIndex).trim();
+				if (remaining) {
+					Object.assign(attrs, parseRemainingAttrs(remaining));
+				}
+				return attrs;
 			}
 		}
-		return attrs;
 	}
 
 	// 尝试匹配 bvid="xxx" 格式
-	const bvidMatch = trimmed.match(/^bvid=["'](BV[\w]+)["']/i);
+	const bvidMatch = trimmed.match(new RegExp(`^bvid=(${QUOTE_CHARS})`, 'i'));
 	if (bvidMatch) {
-		attrs.bvid = bvidMatch[1];
-		// 解析剩余参数
-		const remaining = trimmed.slice(bvidMatch[0].length).trim();
-		if (remaining) {
-			const re = /(\w+)(?:=["']([^"']*)["'])?/g;
-			let m: RegExpExecArray | null;
-			while ((m = re.exec(remaining)) !== null) {
-				attrs[m[1]] = m[2] ?? '';
+		const quoteResult = extractQuotedValue(trimmed, bvidMatch[0].length - 1);
+		if (quoteResult) {
+			attrs.bvid = quoteResult.value;
+			const remaining = trimmed.slice(quoteResult.endIndex).trim();
+			if (remaining) {
+				Object.assign(attrs, parseRemainingAttrs(remaining));
 			}
+			return attrs;
 		}
-		return attrs;
 	}
 
 	// 尝试匹配纯 BV 号格式（开头是 BVxxx）
@@ -99,11 +169,7 @@ function parseAttributes(attrStr: string): Record<string, string> | null {
 		attrs.bvid = bvMatch[1];
 		// 解析剩余参数
 		if (bvMatch[2]) {
-			const re = /(\w+)(?:=["']([^"']*)["'])?/g;
-			let m: RegExpExecArray | null;
-			while ((m = re.exec(bvMatch[2])) !== null) {
-				attrs[m[1]] = m[2] ?? '';
-			}
+			Object.assign(attrs, parseRemainingAttrs(bvMatch[2]));
 		}
 		return attrs;
 	}

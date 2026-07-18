@@ -30,7 +30,7 @@
 		/>
 		<div class="posts">
 			{#each data.featuredPosts as post, i (post.slug)}
-				<RevealItem delay={i * 0.06}>
+				<RevealItem delay={i * 0.06} class={post.pinned ? 'is-pinned' : ''}>
 					<PostCard {post} href="/posts/{post.slug}" />
 				</RevealItem>
 			{/each}
@@ -73,7 +73,11 @@
 		display: flex;
 		height: 100%;
 	}
-	:global(.posts > :first-child) {
+	:global(.posts > .reveal > *) {
+		flex: 1;
+		width: 100%;
+	}
+	:global(.posts > .reveal.is-pinned) {
 		grid-column: span 2;
 	}
 	:global(.photos) {
@@ -94,7 +98,7 @@
 		:global(.posts) {
 			grid-template-columns: 1fr;
 		}
-		:global(.posts > :first-child) {
+		:global(.posts > .reveal.is-pinned) {
 			grid-column: span 1;
 		}
 	}

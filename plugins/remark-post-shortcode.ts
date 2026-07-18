@@ -56,9 +56,10 @@ function isSingleTextParagraph(
 function extractSlug(attrStr: string): string | null {
 	const trimmed = attrStr.trim();
 
-	// 形式1: slug="my-article" 或 slug='my-article'
-	const kvMatch = trimmed.match(/^slug=["']([^"']+)["']$/);
-	if (kvMatch) return kvMatch[1];
+	// 形式1: slug="my-article" / slug='my-article'
+	// 引号支持半角（" '）和全角（" " ' '），因为 smartypants 可能在插件运行前转换引号
+	const kvMatch = trimmed.match(/^slug=(["'\u201C\u201D\u2018\u2019])([^"'\u201C\u201D\u2018\u2019]+)\1$/);
+	if (kvMatch) return kvMatch[2];
 
 	// 形式2: 纯 slug（不含空格和引号，不是 key=value 格式）
 	if (!trimmed.includes('=') && !trimmed.includes(' ') && trimmed.length > 0) {
