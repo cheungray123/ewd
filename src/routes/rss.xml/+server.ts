@@ -20,7 +20,13 @@ export const GET: RequestHandler = ({ url }) => {
 	// 分类过滤支持：?category=xxx
 	// 注意：静态站点下 query 参数在运行时不可用，此过滤仅对 SSR 部署有效。
 	// 静态构建时生成的是包含全部分类的完整 RSS。
-	const category = url.searchParams.get('category');
+	// 预渲染时 url.searchParams 不可用，使用 try-catch 兼容
+	let category: string | null = null;
+	try {
+		category = url.searchParams.get('category');
+	} catch {
+		// 预渲染时忽略 query 参数
+	}
 	let posts = allPosts;
 	let channelTitle: string = site.title;
 	let channelDesc: string = site.description;
