@@ -20,10 +20,21 @@ export function filterPagination<T>(
 	/** 筛选函数：返回 true 表示该项属于该分类 */
 	matchCategory: (item: T, category: string) => boolean
 ) {
-	const activeFilter = $derived(page.url.searchParams.get('category') ?? '全部');
-	const currentPage = $derived(
-		Math.max(1, parseInt(page.url.searchParams.get('page') ?? '1', 10) || 1)
-	);
+	// 预渲染时 page.url.searchParams 不可用，使用 try-catch 兼容
+	const activeFilter = $derived.by(() => {
+		try {
+			return page.url.searchParams.get('category') ?? '全部';
+		} catch {
+			return '全部';
+		}
+	});
+	const currentPage = $derived.by(() => {
+		try {
+			return Math.max(1, parseInt(page.url.searchParams.get('page') ?? '1', 10) || 1);
+		} catch {
+			return 1;
+		}
+	});
 
 	const filtered = $derived.by<T[]>(() => {
 		const items = getItems();
@@ -41,15 +52,20 @@ export function filterPagination<T>(
 	);
 
 	function handleFilterChange(key: string) {
-		// eslint-disable-next-line svelte/prefer-svelte-reactivity
-		const url = new URL(page.url);
-		if (key === '全部') {
-			url.searchParams.delete('category');
-		} else {
-			url.searchParams.set('category', key);
+		// 预渲染时跳过导航操作
+		try {
+			// eslint-disable-next-line svelte/prefer-svelte-reactivity
+			const url = new URL(page.url);
+			if (key === '全部') {
+				url.searchParams.delete('category');
+			} else {
+				url.searchParams.set('category', key);
+			}
+			url.searchParams.delete('page');
+			goto(url.pathname + url.search, { replaceState: true, noScroll: true });
+		} catch {
+			// 预渲染时忽略
 		}
-		url.searchParams.delete('page');
-		goto(url.pathname + url.search, { replaceState: true, noScroll: true });
 	}
 
 	return {
