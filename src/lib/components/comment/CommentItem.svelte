@@ -93,6 +93,20 @@
 		rank.level > 0 ? `box-shadow: 0 0 0 2px ${rank.color}, 0 0 6px 1px ${rank.color}40` : ''
 	);
 	const displayTime = $derived(getRelativeTime(comment.created));
+	// 博主评论统一显示站点名（兼容历史数据中 nick 存为「博主」/身份标签的情况）
+	const displayNick = $derived(
+		comment.master
+			? config.SITE_NAME || config.BLOGGER_NAME || comment.nick || '博主'
+			: comment.nick || '匿名'
+	);
+	function getReplyDisplayNick(nick: string | undefined): string {
+		if (!nick) return '';
+		// 兼容历史数据：博主被 @ 时 replyUser.nick 可能存的是「博主」或 MASTER_TAG
+		if (config.SITE_NAME && (nick === '博主' || nick === config.MASTER_TAG)) {
+			return config.SITE_NAME;
+		}
+		return nick;
+	}
 	const uaInfo = $derived(
 		comment.os || comment.browser
 			? { os: comment.os ?? '', browser: comment.browser ?? '' }
@@ -295,7 +309,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 					class="ava-link"
-					aria-label={`${comment.nick || '用户'}的个人链接`}
+							aria-label={`${displayNick}的个人链接`}
 				>
 					<span
 						class="ava"
@@ -323,12 +337,12 @@
 					{#if comment.link}
 						{@const safeLink = sanitizeLink(comment.link)}
 						{#if safeLink}
-							<a href={safeLink} target="_blank" rel="noopener noreferrer">{comment.nick}</a>
+							<a href={safeLink} target="_blank" rel="noopener noreferrer">{displayNick}</a>
 						{:else}
-							{comment.nick}
+							{displayNick}
 						{/if}
 					{:else}
-						{comment.nick}
+						{displayNick}
 					{/if}
 				</span>
 			{#if comment.master}
@@ -350,7 +364,7 @@
 					onclick={handleContentClick}
 				>
 					{#if comment.replyUser}<span class="reply-to"
-							>@{comment.replyUser.nick ?? comment.replyUser}</span
+							>@{getReplyDisplayNick(comment.replyUser.nick)}</span
 						>{/if}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html processedComment}
@@ -358,7 +372,7 @@
 			{:else}
 				<div class="text">
 					{#if comment.replyUser}<span class="reply-to"
-							>@{comment.replyUser.nick ?? comment.replyUser}</span
+							>@{getReplyDisplayNick(comment.replyUser.nick)}</span
 						>{/if}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html processedComment}
@@ -448,7 +462,7 @@
 		class="rank-card"
 		class:leaving={cardLeaving}
 		role="tooltip"
-		aria-label="{comment.nick} 的等级信息"
+		aria-label="{displayNick} 的等级信息"
 		style="left: {cardLeft}px; top: {cardTop}px; --rank-color: {rank.color}"
 		onmouseenter={handleCardEnter}
 		onmouseleave={handleCardLeave}
@@ -457,7 +471,7 @@
 		<div class="rank-card-inner">
 			<div class="rank-card-header">
 				<div class="rank-card-avatar">
-					<img src={avatarUrl} alt={comment.nick} loading="lazy" />
+					<img src={avatarUrl} alt={displayNick} loading="lazy" />
 				</div>
 				<div class="rank-card-header-text">
 					<div class="rank-card-office">{rank.label}</div>

@@ -378,7 +378,7 @@
 				url,
 				href: window.location.href,
 				ua: navigator.userAgent,
-				nick: effectiveAdmin ? config.BLOGGER_NAME || config.MASTER_TAG || '博主' : nick || '匿名',
+				nick: effectiveAdmin ? config.SITE_NAME || config.BLOGGER_NAME || '博主' : nick || '匿名',
 				mail: effectiveAdmin ? '' : mail,
 				link: effectiveAdmin ? '' : link,
 				content: commentHtml,
@@ -480,7 +480,7 @@
 			</div>
 		{:else if isAdmin && !adminOverride}
 			<div class="c-admin-bar">
-				以「{config.MASTER_TAG || '博主'}」身份评论
+				以「{config.SITE_NAME || config.BLOGGER_NAME || '博主'}」身份评论
 				<button
 					class="c-switch"
 					type="button"
