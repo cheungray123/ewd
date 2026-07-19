@@ -281,7 +281,7 @@
 		onReplyToggle?.(comment.id);
 		onRefresh?.();
 	}
-	function handleContentClick(e: MouseEvent) {
+	function handleContentClick(e: MouseEvent | KeyboardEvent) {
 		if (config.LIGHTBOX !== 'true') return;
 		const target = e.target as HTMLElement;
 		if (target.tagName === 'IMG') {
@@ -362,18 +362,22 @@
 				<span class="time">{displayTime}</span>
 			</div>
 			{#if config.LIGHTBOX === 'true'}
-				<button
-					type="button"
+				<div
+					role="button"
 					class="text text-clickable"
 					aria-label="评论内容，点击查看图片"
 					onclick={handleContentClick}
+					onkeydown={(e) => {
+						if (e.key === 'Enter' || e.key === ' ') handleContentClick(e);
+					}}
+					tabindex="0"
 				>
 					{#if comment.replyUser}<span class="reply-to"
 							>@{getReplyDisplayNick(comment.replyUser)}</span
 						>{/if}
 					<!-- eslint-disable svelte/no-at-html-tags -->
 					{@html processedComment}
-				</button>
+				</div>
 			{:else}
 				<div class="text">
 					{#if comment.replyUser}<span class="reply-to"
@@ -557,6 +561,7 @@
 		background: var(--grad-ava-2);
 	}
 	.ava-link .ava {
+		margin-block-start: 2px;
 		cursor: pointer;
 		transition: filter 0.2s var(--ease);
 	}
@@ -596,6 +601,8 @@
 	}
 	.comment .who .name a {
 		color: var(--fg);
+		font-weight: 600;
+		font-size: var(--text-sm-2);
 		transition: color 0.2s var(--ease);
 	}
 	.comment .who .name a:hover {
