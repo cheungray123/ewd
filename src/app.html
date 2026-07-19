@@ -18,8 +18,10 @@
 		<link rel="manifest" href="/manifest.json" />
 		<!-- 本地字体配置 -->
 		<link rel="stylesheet" href="/fonts/fonts.css" />
-		<!-- Noto Sans SC 可变字体（unicode-range 分包，浏览器按需加载） -->
-		<link rel="stylesheet" href="/fonts/noto-sans-sc.css" />
+		<!-- Noto Sans SC 从 Google Fonts CDN 加载 -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 		<!-- 防闪烁：在 CSS 渲染前从 localStorage 读取主题并设置 data-theme -->
 		<script>
 			(function () {

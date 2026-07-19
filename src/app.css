@@ -36,9 +36,9 @@
 	/* 像素字体：Press Start 2P（本地）→ 后备像素风格 */
 	--font-pixel: 'Press Start 2P', 'Courier New', monospace;
 
-	/* 正文字体：本地 Noto Sans SC（可变字体，unicode-range 分包）→ 系统中文 → 后备 */
+	/* 正文字体：Noto Sans SC（Google Fonts CDN）→ 系统中文 → 后备 */
 	--font-body:
-		'Noto Sans SC', /* 本地可变字体（100-900 权重） */ 'PingFang SC', /* macOS 中文 */ 'Microsoft YaHei',
+		'Noto Sans SC', /* Google Fonts CDN（400/500/700） */ 'PingFang SC', /* macOS 中文 */ 'Microsoft YaHei',
 		/* Windows 中文 */ 'Geist', /* 本地现代无衬线 */ -apple-system,
 		/* iOS/macOS 系统 */ BlinkMacSystemFont, /* macOS Chrome */ 'Segoe UI',
 		/* Windows 系统 */ Roboto, /* Android */ 'Helvetica Neue', /* 经典 */ Arial, sans-serif;
