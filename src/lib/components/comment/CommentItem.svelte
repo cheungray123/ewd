@@ -99,7 +99,9 @@
 			? config.SITE_NAME || config.BLOGGER_NAME || comment.nick || '博主'
 			: comment.nick || '匿名'
 	);
-	function getReplyDisplayNick(replyUser: { nick?: string; mailMd5?: string } | string | undefined): string {
+	function getReplyDisplayNick(
+		replyUser: { nick?: string; mailMd5?: string } | string | undefined
+	): string {
 		if (!replyUser) return '';
 		// 兼容后端两种返回格式：字符串（直接是昵称）或对象 { nick, mailMd5 }
 		const nick = typeof replyUser === 'string' ? replyUser : replyUser.nick;
@@ -312,7 +314,7 @@
 					target="_blank"
 					rel="noopener noreferrer"
 					class="ava-link"
-							aria-label={`${displayNick}的个人链接`}
+					aria-label={`${displayNick}的个人链接`}
 				>
 					<span
 						class="ava"
@@ -348,9 +350,9 @@
 						{displayNick}
 					{/if}
 				</span>
-			{#if comment.master}
-				<span class="badge-op">{config.MASTER_TAG || '作者'}</span>
-			{/if}
+				{#if comment.master}
+					<span class="badge-op">{config.MASTER_TAG || '作者'}</span>
+				{/if}
 				{#if comment.top === 1}
 					<span class="badge-top">置顶</span>
 				{/if}
@@ -604,11 +606,10 @@
 		font-size: 9px;
 		letter-spacing: 0.08em;
 		color: var(--on-accent);
-		background: var(--accent);
+		background: var(--accent-3);
 		padding: 0.12rem 0.4rem;
 		border-radius: var(--r-sm);
 		text-transform: uppercase;
-		filter: invert(1);
 	}
 	:global([data-theme='dark']) .badge-op {
 		color: var(--on-accent);
@@ -645,13 +646,13 @@
 		color: var(--accent);
 	}
 	.comment .text :global(img) {
-		max-width: 100%;
+		max-width: 100px;
 		border-radius: var(--r-sm);
 		margin-top: 0.3rem;
 		transition: transform 0.2s var(--ease);
 	}
 	.comment .text-clickable {
-		cursor: zoom-in;
+		cursor: default;
 		background: none;
 		border: none;
 		font: inherit;
@@ -659,6 +660,9 @@
 		padding: 0;
 		width: 100%;
 		color: var(--dim);
+	}
+	.comment .text-clickable :global(img) {
+		cursor: zoom-in;
 	}
 	.comment .text-clickable :global(img:hover) {
 		transform: scale(1.02);
