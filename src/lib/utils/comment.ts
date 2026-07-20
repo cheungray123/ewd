@@ -22,12 +22,17 @@ const STORAGE_KEY = 'comment_user';
 const REQUEST_TIMEOUT = 15000;
 const MAX_RETRIES = 2;
 
-async function request<T>(event: string, params?: { [key: string]: unknown }): Promise<T> {
+async function request<T>(
+	event: string,
+	params?: { [key: string]: unknown },
+	retry = true
+): Promise<T> {
 	const body = { event, ...params };
 
 	let lastError: Error | null = null;
+	const maxRetries = retry ? MAX_RETRIES : 0;
 
-	for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+	for (let attempt = 0; attempt <= maxRetries; attempt++) {
 		const controller = new AbortController();
 		const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
@@ -53,7 +58,7 @@ async function request<T>(event: string, params?: { [key: string]: unknown }): P
 
 			// 非超时错误不重试
 			const isTimeout = e instanceof Error && e.name === 'AbortError';
-			if (!isTimeout || attempt === MAX_RETRIES) {
+			if (!isTimeout || attempt === maxRetries) {
 				if (isTimeout) {
 					throw new Error('请求超时，请稍后重试', { cause: e });
 				}
@@ -115,7 +120,7 @@ export async function getComments(
 
 export async function submitComment(params: CommentSubmitParams): Promise<string | null> {
 	try {
-		const res = await request<ApiResponse<{ id: string }>>('COMMENT_SUBMIT', { ...params });
+		const res = await request<ApiResponse<{ id: string }>>('COMMENT_SUBMIT', { ...params }, false);
 		if (res.code === 0 && res.data) {
 			return res.data.id;
 		}
