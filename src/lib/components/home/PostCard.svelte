@@ -32,7 +32,7 @@
 		flex-direction: column;
 		position: relative;
 		box-shadow: var(--pixel-shadow);
-		height: 100%;
+		min-height: 11rem;
 		transition:
 			transform 0.2s var(--ease),
 			border-color 0.2s var(--ease),
@@ -164,5 +164,10 @@
 	.post:hover .more {
 		opacity: 1;
 		transform: none;
+	}
+	@media (max-width: 680px) {
+		.post {
+			min-height: auto;
+		}
 	}
 </style>

@@ -1,0 +1,8 @@
+/* 简化测试：单个 @font-face，无 unicode-range */
+@font-face {
+  font-family: 'Noto Sans SC Test';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(./noto-sans-sc/noto-sans-sc-119-wght-normal.woff2) format('woff2');
+}

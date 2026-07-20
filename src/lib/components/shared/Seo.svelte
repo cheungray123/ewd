@@ -147,8 +147,6 @@
 
 	<!-- JSON-LD 结构化数据 -->
 	{#each structuredData as item, i (i)}
-		<script type="application/ld+json">
-			{JSON.stringify(item).replace(/</g, '\\u003c')}
-		</script>
+		{@html `<script type="application/ld+json">${JSON.stringify(item).replace(/</g, '\\u003c')}</script>`}
 	{/each}
 </svelte:head>
